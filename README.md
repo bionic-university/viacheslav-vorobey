@@ -1,4 +1,4 @@
 viacheslav-vorobey
 =============
 
-* [Homework #1](tree/master/lesson-2/hw) - Palindromes Detector
+* [Homework #1](https://github.com/bionic-university/viacheslav-vorobey/tree/master/lesson-2/hw) - Palindromes Detector
