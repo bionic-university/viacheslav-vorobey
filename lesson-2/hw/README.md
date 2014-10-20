@@ -8,14 +8,14 @@ A small command line script to check if a input string is a palindrome.
 
 You can run the script in the following ways:
 
-> $ php index.php string
-> $ php index.php "some string"
+    $ php index.php string
+    $ php index.php "some string"
 
 For example:
 
-> $ php index.php Saippuakivikauppias
-> $ php index.php "Madam, I'm Adam"
-> $ php index.php "Аргентина манит негра"
+    $ php index.php Saippuakivikauppias
+    $ php index.php "Madam, I'm Adam"
+    $ php index.php "Аргентина манит негра"
 
 
 
