@@ -5,14 +5,14 @@ class PalindromesDetector
     /**
      * @var string
      */
-    private $_inputString;
+    private $inputString;
     
     /** 
      * @param $inputString
      */
     public function __construct($inputString) 
     {
-        $this->_inputString = $this->_prepareInputString($inputString);
+        $this->inputString = $this->prepareInputString($inputString);
     }
     
     /**
@@ -22,14 +22,11 @@ class PalindromesDetector
      * @return string
      * @throws InvalidArgumentException
      */
-    private function _prepareInputString($inputString)
+    private function prepareInputString($inputString)
     {
-        if (!is_string($inputString))
-        {
+        if (!is_string($inputString)) {
             throw new InvalidArgumentException('Input arguments must be a string');
-        }
-        else
-        {
+        } else {
             $inputString = strtolower(trim($inputString));
             return str_replace(array(",", " ", "'", "&nbsp;"), "", $inputString);
         }
@@ -40,7 +37,7 @@ class PalindromesDetector
      */
     public function findPalindrome()
     {
-        return $this->_isPalindrome($this->_inputString);
+        return $this->isPalindrome($this->inputString);
     }
     
     /**
@@ -48,22 +45,16 @@ class PalindromesDetector
      * @param string $inputString The input string to check for a palindrom
      * @return boolean     
      */ 
-    private function _isPalindrome($inputString)
+    private function isPalindrome($inputString)
     {
         $stringLength = strlen($inputString) - 1;
         
-        if (strlen($inputString) <= 1)
-        {
+        if (strlen($inputString) <= 1) {
             return true;
-        }
-        else 
-        {
-            if (substr($inputString, 0, 1) === substr($inputString, $stringLength, 1))
-            {
-                return $this->_isPalindrome(substr($inputString, 1, $stringLength - 1));
-            }
-            else
-            {
+        } else {
+            if (substr($inputString, 0, 1) === substr($inputString, $stringLength, 1)) {
+                return $this->isPalindrome(substr($inputString, 1, $stringLength - 1));
+            } else {
                 return false;
             }
             
