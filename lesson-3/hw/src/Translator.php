@@ -10,7 +10,7 @@ class Translator
    /**
     * @var array $languages
     */
-    private $languages = ['uk', 'en', 'de'];
+    private $languages = [];
     
    /**
     * Constructor
@@ -23,6 +23,7 @@ class Translator
             $this->setLanguages($language);
         } catch(Exception $e) {
             echo $e->getMessage();
+            exit;
         }
     }    
     
@@ -34,14 +35,12 @@ class Translator
     private function setLanguages($language)
     {
         // Validation
-        if (!is_string($language)) {// or !is_array($language)) {
-            throw new InvalidArgumentException('Arguments must be a string or array!' . PHP_EOL);
-        }
-        
         if (is_array($language)) {
             $this->languages = $language;
-        } else {
+        } elseif (is_string($language)) {
             $this->languages = explode(',', $language);
+        } else {
+            throw new InvalidArgumentException('Arguments must be a string or array!' . PHP_EOL);
         }
     }
     
@@ -68,8 +67,8 @@ class Translator
     /**
      * Translate given materials
      * 
-     * @param
-     * @throws 
+     * @param TranslatableInterface $material
+     * @throws Exception
      *
      * @return mixed
      */
@@ -80,22 +79,18 @@ class Translator
         if ($material instanceof TranslatableInterface) {
             $this->setMaterial($material);
         } else {
-            throw new \Exception('Input material is not a valid class');
+            throw new \Exception('It is not a valid class');
         }
         
-        $materialLanguage = (array)$this->material->getLanguage();
+        $materialLanguage = $this->material->getLanguage();
         $translatorLanguages = $this->getLanguages();
-
         
-        print_r($materialLanguage);
-        print_r($translatorLanguages);
-        //die;
-        
-        if (!in_array($translatorLanguages, $materialLanguage)) {
+        if (!in_array($materialLanguage, $translatorLanguages)) {
             $isAvailableLanguage = false;
-            return false;
+            //return false;
         }
-        return $this->showTranslations($this->material->__toString(), $materialLanguage, $isAvailableLanguage);
+
+        return $this->showTranslations($this->material->getMaterialName(), $materialLanguage, $isAvailableLanguage);
     }
     
     /**
@@ -112,11 +107,11 @@ class Translator
         $outputString = '';
         
         if ($isAvailableLanguage) {
-            $outputString .= $materialName . ' - ' . $materialLanguage;
+            $outputString .= 'Success translated | ' . $materialLanguage  . ' | ' . $materialName;
         } else {
-            $outputString .= $materialName . ' - ' . $materialLanguage;
+            $outputString .= 'Fail translated    | ' . $materialLanguage . ' | ' . $materialName;
         }
-        
+
         echo $outputString . PHP_EOL;
     }
 }

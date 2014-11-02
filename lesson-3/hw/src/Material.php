@@ -8,7 +8,7 @@ abstract class Material
     protected $language = 'en';
 
     /**
-     * @param string $language Language
+     * Constructor
      */
     public function __construct(){}
     

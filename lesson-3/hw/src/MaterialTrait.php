@@ -17,8 +17,8 @@ trait MaterialTrait
      *
      * @return string
      */
-    public function __toString()
+    public function getMaterialName()
     {
-        parent::__toString();
+        return __CLASS__;
     }
 }

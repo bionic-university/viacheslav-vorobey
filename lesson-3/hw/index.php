@@ -6,7 +6,7 @@ spl_autoload_register(function ($className) {
 	if (file_exists($filePath)) {
 		require_once $filePath;
 	} else {
-		require_once 'src' . DIRECTORY_SEPARATOR . 'Material' . DIRECTORY_SEPARATOR . $className . '.php';;
+		require_once 'src' . DIRECTORY_SEPARATOR . 'Material' . DIRECTORY_SEPARATOR . $className . '.php';
 	}
 
 	if (file_exists('vendor/autoload.php')) {
@@ -16,7 +16,7 @@ spl_autoload_register(function ($className) {
 
 
 // Prepare input arguments
-$language = 'en,uk,de';
+$language = ['en','uk','de'];
 
 
 // Instantiate
