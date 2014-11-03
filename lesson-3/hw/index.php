@@ -1,6 +1,6 @@
 <?php
 
-// Classes autoloader
+// Class autoloader
 spl_autoload_register(function ($className) {
 	$filePath = 'src' . DIRECTORY_SEPARATOR . $className . '.php';
 	if (file_exists($filePath)) {
@@ -15,8 +15,15 @@ spl_autoload_register(function ($className) {
 });
 
 
-// @todo: Clear the input arguments
-$language = ['en','uk','de'];
+// @TODO: Move to Translator class
+// Clear the input arguments
+$language = [];
+if (count($argv) > 1) {
+	array_shift($argv);
+	foreach ($argv as $argument) {
+		$language[] = $argument;
+	}
+}
 
 
 // Instantiate a translator
