@@ -15,11 +15,11 @@ spl_autoload_register(function ($className) {
 });
 
 
-// Prepare input arguments
+// @todo: Clear the input arguments
 $language = ['en','uk','de'];
 
 
-// Instantiate
+// Instantiate a translator
 $translator = new Translator($language);
 
 $movie = new Movie('de');

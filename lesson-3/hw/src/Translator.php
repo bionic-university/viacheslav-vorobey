@@ -107,9 +107,9 @@ class Translator
         $outputString = '';
         
         if ($isAvailableLanguage) {
-            $outputString .= 'Success translated | ' . $materialLanguage  . ' | ' . $materialName;
+            $outputString .= 'Successfully translated | ' . $materialLanguage  . ' | ' . $materialName;
         } else {
-            $outputString .= 'Fail translated    | ' . $materialLanguage . ' | ' . $materialName;
+            $outputString .= 'Not translated          | ' . $materialLanguage . ' | ' . $materialName;
         }
 
         echo $outputString . PHP_EOL;
