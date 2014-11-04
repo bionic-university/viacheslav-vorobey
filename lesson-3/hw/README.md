@@ -14,7 +14,6 @@ You can run the script in the following way:
 For example:
 
     $ php index.php uk en de
-    $ php index.php "uk" "de" "fr"
 
 
 This will return:
