@@ -12,19 +12,9 @@ class Translator
     */
     private $languages = [];
     
-   /**
-    * Constructor
-    * 
-    * @param $language Given languages
-    */
-    public function __construct($language)
+    public function __construct()
     {
-        try {
-            $this->setLanguages($language);
-        } catch(Exception $e) {
-            echo $e->getMessage();
-            exit;
-        }
+        $this->setLanguages();
     }    
     
     /**
@@ -32,15 +22,19 @@ class Translator
      *
      * @return void
      */
-    private function setLanguages($language)
+    private function setLanguages()
     {
-        // Validation
+        $language = [];
+
+        try {
+            $language = $this->getArguments();
+        } catch(\InvalidArgumentException $e) {
+            echo $e->getMessage();
+            //exit;
+        }
+        
         if (is_array($language)) {
             $this->languages = $language;
-        } elseif (is_string($language)) {
-            $this->languages = explode(',', $language);
-        } else {
-            throw new InvalidArgumentException('Arguments must be a string or array!' . PHP_EOL);
         }
     }
     
@@ -65,7 +59,7 @@ class Translator
     }
     
     /**
-     * Translate given materials
+     * Translate input materials
      * 
      * @param TranslatableInterface $material
      * @throws Exception
@@ -113,5 +107,28 @@ class Translator
         }
 
         echo $outputString . PHP_EOL;
+    }
+
+
+    /**
+     * Get arguments from command line
+     *
+     * @return array
+     */
+    public function getArguments()
+    {
+        $language = [];        
+        $arguments = $_SERVER['argv'];
+
+        if (isset($arguments[1])) {
+            array_shift($arguments);
+            foreach ($arguments as $argument) {
+                $language[] = strtolower(trim($argument));
+            }
+        } else {
+            throw new \InvalidArgumentException("\nUSAGE: php index.php <arguments [ex.: en, uk, de etc.]>\n" . PHP_EOL);
+        }
+
+        return $language;
     }
 }

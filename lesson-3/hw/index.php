@@ -15,26 +15,14 @@ spl_autoload_register(function ($className) {
 });
 
 
-// @TODO: Move to Translator class
-// Clear the input arguments
-$language = [];
-if (count($argv) > 1) {
-	array_shift($argv);
-	foreach ($argv as $argument) {
-		$language[] = $argument;
-	}
-}
-
-
 // Instantiate a translator
-$translator = new Translator($language);
+$translator = new Translator();
 
-$movie = new Movie('de');
 try {    
     $translator->translate(new Book('fr'));
-    $translator->translate(new Magazine('es'));
+    $translator->translate(new Magazine());
     $translator->translate(new Audiobook);
-    $translator->translate($movie);
-} catch(Exception $e) {
-    echo $e->getMessage() . PHP_EOL;
+    $translator->translate(new Movie('de'));
+} catch(\Exception $e) {
+    echo $e->getMessage() . PHP_EOL; // why this shit doesn't work?
 }
