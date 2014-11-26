@@ -22,12 +22,13 @@ class IndexController extends Controller
      */
     public function indexAction()
     {
-        echo 'Hello from IndexController :: indexAction';
+        //echo 'Hello from IndexController :: indexAction';
 
-        if ($this->loadModel('user')) {
-            echo "<br> Model is loaded!";
-        }
+        $events = $this->loadModel('events');
 
+        $this->view->render('index/index', [
+            'events' => $events
+        ]);
     }
 
     /**
@@ -37,6 +38,7 @@ class IndexController extends Controller
     public function addAction()
     {
         echo 'Hello from IndexController :: addAction';
+        $this->view->render('index/index');
     }
 
     /**

@@ -53,38 +53,52 @@ class Application
     {
         // Load configuration data to config array
         Config::getInstance()->init($config);
-        
-        // Pre-initializes the application
-        $this->preInit();
+    }
 
-        $url = $this->getUrl();
+    /**
+     * Run the application
+     * @return void
+     */
+    public function run()
+    {
+        try {
+            // Pre-initializes the application
+            $this->preInit();
 
-        $controllerFile = $this->getControllerRealPath($url[0]);
-        if (file_exists($controllerFile)) {
-            unset($url[0]);
-            require $controllerFile;
-        } else {
-            $this->controllerName = $this->getDefaultController();
-            $this->redirect();
-        }
-
-        $controllerName = 'BionicUniversity\Eventmapia\Controllers\\' . $this->controllerName;
-        $this->controllerName = new $controllerName;
-
-        // Set path to models directory
-        $this->controllerName->setModelPath($this->getModelPath());
-
-        $this->actionName = $this->getDefaultAction();
-        if (isset($url[1])) {
-            if (method_exists($this->controllerName, strtolower($url[1]) . 'Action')) {
-                $this->actionName = strtolower($url[1]) . 'Action';
-                unset($url[1]);
+            $url = $this->getUrl();
+            $controllerFile = $this->getControllerRealPath($url[0]);
+            if (file_exists($controllerFile)) {
+                unset($url[0]);
+                require $controllerFile;
+            } else {
+                $this->controllerName = $this->getDefaultController();
+                $this->redirect();
             }
+
+            $controllerName = 'BionicUniversity\Eventmapia\Controllers\\' . $this->controllerName;
+            $this->controllerName = new $controllerName;
+
+            // Set path to models directory
+            $this->controllerName->setModelPath($this->getModelPath());
+
+            // Set path to views directory
+            $this->controllerName->view->setViewPath($this->getViewPath());
+
+            $this->actionName = $this->getDefaultAction();
+            if (isset($url[1])) {
+                if (method_exists($this->controllerName, strtolower($url[1]) . 'Action')) {
+                    $this->actionName = strtolower($url[1]) . 'Action';
+                    unset($url[1]);
+                }
+            }
+
+            $this->params = $url ? array_values($url) : [];
+
+            call_user_func_array([$this->controllerName, $this->actionName], $this->params);
+
+        } catch (\Exception $e) {
+            echo "<strong>Application can't be loaded:</strong> " . $e->getMessage();
         }
-
-        $this->params = $url ? array_values($url) : [];
-
-        call_user_func_array([$this->controllerName, $this->actionName], $this->params);
     }
 
     /**
@@ -93,15 +107,18 @@ class Application
      */
     public function preInit()
     {
-        // Get all configuration data
-        $config = Config::getInstance()->get();
-
-        if (!$config || !isset($config['basePath']) || empty($config['basePath'])) {
-            throw new \Exception('Configuration is missed. The "basePath" is required.');
+        // Load configuration data
+        if (!$config = Config::getInstance()->get()) {
+            throw new \Exception('Configuration is missed!');
+        }
+        /** if (!isset($config['basePath']) || empty($config['basePath'])) {
+            throw new \Exception('The "basePath" is required.');
         } else {
             $this->setBasePath($config['basePath']);
             unset($config['basePath']);
-        }
+        } */
+
+        $this->setBasePath($config['basePath']);
 
         if (isset($config['defaultController']) && !empty($config['defaultController'])) {
             $this->setDefaultController($config['defaultController']);
@@ -197,10 +214,10 @@ class Application
      */
     public function getControllerPath()
     {
-        if ($this->viewPath !== null) {
-            return $this->viewPath;
+        if ($this->controllerPath !== null) {
+            return $this->controllerPath;
         } else {
-            return $this->viewPath = $this->getBasePath() . DIRECTORY_SEPARATOR . 'Controllers';
+            return $this->controllerPath = $this->getBasePath() . DIRECTORY_SEPARATOR . 'Controllers';
         }
     }
 

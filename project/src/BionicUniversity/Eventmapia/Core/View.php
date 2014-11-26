@@ -14,19 +14,26 @@ namespace BionicUniversity\Eventmapia\Core;
  */
 class View 
 {
-    /**
-     * @var string $layout Template name
-     */
-    public $layout = 'layout.php'; 
+    /** @var string $layout Template name */
+    public $layout = 'layout.php';
+
+    /** @var string $viewPath Path to view files */
+    public $viewPath;
     
     /**
-     * Render 
+     * Render
      * @param string $name
      * @param mixed $data
+     * @throws \Exception
      */
     function render($name, $data = null)
     {
-       require_once 'src/views/' . $this->layout;
+        if (!file_exists($this->viewPath . DIRECTORY_SEPARATOR . $this->layout) or
+            !is_file($this->viewPath . DIRECTORY_SEPARATOR . $this->layout)) {
+            throw new \Exception("Template '{$this->layout}' not found");
+        }
+
+        require_once $this->viewPath . DIRECTORY_SEPARATOR . $this->layout;
     } 
     
     /**
@@ -34,19 +41,28 @@ class View
      * @throws \Exception
      * @return string
      */
-    function assign()
+    function assign($name)
     {
-       ob_start();
+        ob_start();
         try {
-            if (!file_exists($this->path . '/' . $this->template) or !is_file($this->path . '/' . $this->template)) {
-                throw new \Exception("Template '{$this->template}' not found");
+            if (!file_exists($this->viewPath . DIRECTORY_SEPARATOR . $this->layout) or
+                !is_file($this->viewPath . DIRECTORY_SEPARATOR . $this->layout)) {
+                throw new \Exception("Template '{$this->layout}' not found");
             }
-            extract($this->container);
-            require $this->path . '/' . $this->template;
+            require $this->viewPath . DIRECTORY_SEPARATOR . $this->layout;
         } catch (\Exception $e) {
             ob_end_clean();
             return '';
         }
         return ob_get_clean();
-    }	
+    }
+
+    /**
+     * Set path to view files. Called from the Application
+     * @param string $viewPath
+     */
+    public function setViewPath($viewPath)
+    {
+        $this->viewPath = $viewPath;
+    }
 }

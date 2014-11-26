@@ -23,14 +23,19 @@ class Model
 
 
     /**
-     *
+     * Constructor
      */
     public function __construct()
     {
-		//$this->db = new Database([]);
+        // Load connection configuration data
+        if (!$db = Config::getInstance()->get('db')) {
+            throw new \Exception('Configuration is missed!');
+        }
+
+        $this->db = new Database($db);
 	}
 
-    public function model($className = __CLASS__)
+    protected function model($className = __CLASS__)
     {
         return new $className;
 

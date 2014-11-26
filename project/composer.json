@@ -1,8 +1,5 @@
 {
-    "name": "vorobeyme/eventmapia",
-    "config": {
-        "vendor-dir": "vendor"
-    },
+    "name": "vorobeyme/simplemvc",
     "require": {
         "php": ">=5.4.0"
     },
@@ -11,6 +8,9 @@
             "BionicUniversity\\Eventmapia\\Core\\": "src/BionicUniversity/Eventmapia/Core",
             "BionicUniversity\\Eventmapia\\Controllers\\": "src/BionicUniversity/Eventmapia/Controllers"
 	    "BionicUniversity\\Eventmapia\\Models\\": "src/BionicUniversity/Eventmapia/Models"
+	    "BionicUniversity\\Eventmapia\\Models\\Db\\": "src/BionicUniversity/Eventmapia/Models/Db"
+	    "BionicUniversity\\Eventmapia\\Views\\": "src/BionicUniversity/Eventmapia/Views"
+	    "BionicUniversity\\Eventmapia\\Helpers\\": "src/BionicUniversity/Eventmapia/Helpers"
         },
     },
 }

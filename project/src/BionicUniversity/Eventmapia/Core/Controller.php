@@ -22,13 +22,16 @@ class Controller
     
     /** @var Model */
     protected $model;
+    
+    /** @var View */
+    public $view;
 
     /** @var string $modelPath */
     protected $modelPath;
-    
-    /** @var View */
-    protected $view;
-    
+
+    /**
+     * Constructor
+     */
     function __construct()
     {
         $this->view = new View();

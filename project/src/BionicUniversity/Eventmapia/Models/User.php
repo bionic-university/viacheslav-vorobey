@@ -16,5 +16,8 @@ use BionicUniversity\Eventmapia\Core\Model;
  */
 class User extends Model
 {
+    public function get()
+    {
 
+    }
 }

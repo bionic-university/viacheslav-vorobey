@@ -13,7 +13,8 @@ return [
         'host' => 'localhost',
         'name' => 'eventmapia',
         'user' => 'root',
-        'pass' => ''
+        'pass' => '',
+        //'persistent' => true
     ],
     
     /** Debug configuration */
