@@ -19,9 +19,10 @@
     </div>
     <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Events</a></li>
+            <li class="active"><a href="/web/events/index">Events</a></li>
             <li><a href="#">Add event</a></li>
-            <li><a href="#">Login</a></li>
+            <li><a href="/web/index/registration">Registration</a></li>
+            <li><a href="/web/index/login">Login</a></li>
             <li>&nbsp;</li>
         </ul>
         <form class="navbar-form">

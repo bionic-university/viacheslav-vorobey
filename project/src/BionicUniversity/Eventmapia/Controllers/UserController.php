@@ -30,19 +30,6 @@ class UserController extends Controller
      *
      *
      */
-    public function addAction()
-    {
-       if ($this->request->isPost()) {
-            // do something
-        } else {
-            throw new ApplicationException('Fail'); 
-        }
-    }
-
-    /**
-     *
-     *
-     */
     public function editAction($id)
     {
        
@@ -64,11 +51,6 @@ class UserController extends Controller
      */
     public function deleteAction($id)
     {
-        if ($this->request->isPost()) {
-            $this->model()->delete($id);
-            $this->flashMessager->add('User was successfuly removed!')
-        } else {
-            throw new ApplicationException('Fail'); 
-        }
+
     }
 }

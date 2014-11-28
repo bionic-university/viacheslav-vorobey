@@ -3,7 +3,7 @@
  * MVC Framework Component
  *
  * @author vorobeyme
- * @package Core
+ * @package BionicUniversity\Eventmapia\Core
  * @link https://github.com/bionic-university/viacheslav-vorobey/project
  */
  
@@ -19,7 +19,7 @@ class Model
     /**
      * @var object $db
      */
-    private $db;
+    public $db;
 
 
     /**

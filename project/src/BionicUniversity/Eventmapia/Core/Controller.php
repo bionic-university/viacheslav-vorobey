@@ -3,13 +3,14 @@
  * MVC Framework Component
  *
  * @author vorobeyme
- * @package Core
- * @link https://github.com/bionic-university/viacheslav-vorobey/project
+ * @package BionicUniversity\Eventmapia\Core
+ * @link https://github.com/bionic-university/viacheslav-vorobey/tree/master/project
  */
  
 namespace BionicUniversity\Eventmapia\Core;
 
 use BionicUniversity\Eventmapia\Models;
+use BionicUniversity\Eventmapia\Core;
 
 /**
  * Controller Frontend
@@ -66,5 +67,10 @@ class Controller
     public function setModelPath($modelPath)
     {
         $this->modelPath = $modelPath;
+    }
+
+    public function redirect($path)
+    {
+        header('Location:' . $path);
     }
 }
