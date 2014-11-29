@@ -55,16 +55,15 @@ class IndexController extends Controller
 
     public function loginAction()
     {
+        $model = $this->loadModel('user');
+
         if ($this->request->isPost()) {
             $email = $this->request->getParam('email');
             $password = $this->request->getParam('password');
 
-            if (isset($email, $password) && !empty($email) && !empty($password)) {
-                $data = [
-                    'email' => $email,
-                    'password' => $password,
-                ];
+            if (isset($email, $password) && !empty($email) && !empty($password) && $model->isValid()) {
 
+                //$this->auth->login();
                 $this->redirect('/web/user/index');
             } else {
                 $this->redirect('/web/index/login');
@@ -76,7 +75,7 @@ class IndexController extends Controller
 
     public function logoutAction()
     {
-        // @TODO: destroy
+        $this->auth->logout();
         $this->redirect('/web/index/index');
     }
 }

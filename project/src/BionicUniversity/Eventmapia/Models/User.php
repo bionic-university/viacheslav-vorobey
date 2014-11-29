@@ -35,4 +35,9 @@ class User extends Model
     {
         //$this->db->insert($this->table, ['email' => ''])
     }
+
+    public function login()
+    {
+
+    }
 }

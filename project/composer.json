@@ -5,12 +5,7 @@
     },
     "autoload": {
         "psr-4": {
-            "BionicUniversity\\Eventmapia\\Core\\": "src/BionicUniversity/Eventmapia/Core",
-            "BionicUniversity\\Eventmapia\\Controllers\\": "src/BionicUniversity/Eventmapia/Controllers"
-	    "BionicUniversity\\Eventmapia\\Models\\": "src/BionicUniversity/Eventmapia/Models"
-	    "BionicUniversity\\Eventmapia\\Models\\Db\\": "src/BionicUniversity/Eventmapia/Models/Db"
-	    "BionicUniversity\\Eventmapia\\Views\\": "src/BionicUniversity/Eventmapia/Views"
-	    "BionicUniversity\\Eventmapia\\Helpers\\": "src/BionicUniversity/Eventmapia/Helpers"
-        },
-    },
+            "BionicUniversity\\Eventmapia\\Core\\": "src/BionicUniversity/Eventmapia/Core"
+        }
+    }
 }
