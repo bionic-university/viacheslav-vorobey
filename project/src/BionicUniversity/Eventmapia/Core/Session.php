@@ -16,12 +16,15 @@ class Session
 {
     /**
      * Start session
+     * @return void
      */
     public function start()
     {
-        if (!session_id()) {
-            session_start();
+        if (session_id()) {
+            return;
         }
+
+        session_start();
     }
 
     /**
@@ -50,18 +53,31 @@ class Session
         }
     }
 
+
     /**
+     * Unset session by key
      * @param string $key
-     * @return mixed
+     * @return void
      */
-    public function destroy($key)
+    public function remove($key)
+    {
+        $this->start();
+
+        if (isset($_SESSION[$key])) {
+            unset($_SESSION[$key]);
+        }
+    }
+
+    /**
+     * Kill a session
+     * @return bool
+     */
+    public function destroy()
     {
         if (session_id()) {
             session_destroy();
             return true;
         }
         return false;
-
-        //unset($_SESSION[$key]);
     }
 }

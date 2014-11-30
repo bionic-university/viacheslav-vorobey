@@ -4,7 +4,7 @@
  *
  * @author vorobeyme
  * @package BionicUniversity\Eventmapia\Core\Db
- * @link https://github.com/bionic-university/viacheslav-vorobey/project
+ * @link https://github.com/bionic-university/viacheslav-vorobey/tree/master/project
  */
 
 namespace BionicUniversity\Eventmapia\Core\Db;
