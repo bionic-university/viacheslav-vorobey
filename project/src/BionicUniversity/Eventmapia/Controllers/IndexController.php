@@ -3,7 +3,7 @@
  * Eventmapia
  *
  * @author vorobeyme
- * @link https://github.com/bionic-university/viacheslav-vorobey/project
+ * @link https://github.com/bionic-university/viacheslav-vorobey/tree/master/project
  */
  
 namespace BionicUniversity\Eventmapia\Controllers;
@@ -28,7 +28,6 @@ class IndexController extends Controller
     public function registrationAction()
     {
         $model = $this->loadModel('user');
-        //print_r($model);
 
         if ($this->request->isPost()) {
             $email = $this->request->getParam('email');
@@ -38,16 +37,15 @@ class IndexController extends Controller
             if (isset($email, $password, $name) && !empty($email) && !empty($password) && !empty($name)) {
                 $data = [
                     'email' => $email,
-                    'password' => md5($password),
+                    'password' => $password,
                     'username' => $name,
-                    'active' => 1
                 ];
 
-                $model->db->insert($model->getTable(), $data);
-                //$model->registerUser($data);
+                $model->registerUser($data);
+                $this->redirect('/web/user/cabinet');
+            } else {
+                $this->redirect('/web/index/registration');
             }
-
-            $this->redirect('/web/index/index');
         }
 
         $this->view->render('index/registration');
@@ -55,15 +53,18 @@ class IndexController extends Controller
 
     public function loginAction()
     {
+        if (!$this->auth->isGuest()) {
+            $this->redirect('/web/index/index'); //must be return url
+        }
+
         $model = $this->loadModel('user');
 
         if ($this->request->isPost()) {
             $email = $this->request->getParam('email');
             $password = $this->request->getParam('password');
 
-            if (isset($email, $password) && !empty($email) && !empty($password) && $model->isValid()) {
-
-                //$this->auth->login();
+            if (!empty($email) && !empty($password) && $model->login($email, $password)) {
+                $this->auth->login($model->userId);
                 $this->redirect('/web/user/index');
             } else {
                 $this->redirect('/web/index/login');
@@ -73,6 +74,9 @@ class IndexController extends Controller
         $this->view->render('index/login');
     }
 
+    /**
+     * Logout the current user and redirect to homepage.
+     */
     public function logoutAction()
     {
         $this->auth->logout();

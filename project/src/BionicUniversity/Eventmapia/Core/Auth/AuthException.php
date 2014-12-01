@@ -13,7 +13,7 @@ namespace BionicUniversity\Eventmapia\Core\Auth;
 /**
  * Class AuthException
  */
-class AuthException
+class AuthException extends \Exception
 {
 
 }
