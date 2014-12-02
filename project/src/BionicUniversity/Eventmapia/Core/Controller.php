@@ -11,6 +11,7 @@ namespace BionicUniversity\Eventmapia\Core;
 
 use BionicUniversity\Eventmapia\Models;
 use BionicUniversity\Eventmapia\Core;
+use BionicUniversity\Eventmapia\Core\Auth\Auth;
 
 /**
  * Controller Frontend
@@ -30,6 +31,9 @@ class Controller
     /** @var string $modelPath */
     protected $modelPath;
 
+    /** @var Auth */
+    protected $auth;
+
     /**
      * Constructor
      */
@@ -37,6 +41,9 @@ class Controller
     {
         $this->view = new View();
         $this->request = new Request();
+
+        $this->auth = new Auth();
+        $this->session = new Session();
     }
     
     /**
@@ -53,8 +60,6 @@ class Controller
         if (file_exists($path)) {
             require_once $path;
             return new $className;
-
-            echo '<br>'; print_r($path);
             // $this->model = new $modelName();
         }
     }

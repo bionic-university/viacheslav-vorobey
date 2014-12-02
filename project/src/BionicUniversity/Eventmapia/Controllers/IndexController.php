@@ -9,6 +9,7 @@
 namespace BionicUniversity\Eventmapia\Controllers;
 
 use BionicUniversity\Eventmapia\Core\Controller;
+use BionicUniversity\Eventmapia\Models\Events;
 
 /**
  * IndexController
@@ -18,11 +19,11 @@ class IndexController extends Controller
 {
     public function indexAction()
     {
-        $events = $this->loadModel('events');
+        $model = $this->loadModel('events');
+        $events = $model->getAllEvents();
 
-        $this->view->render('index/index', [
-            'events' => $events
-        ]);
+        $this->view->events = $events;
+        $this->view->render('index/index');
     }
 
     public function registrationAction()
@@ -34,7 +35,7 @@ class IndexController extends Controller
             $password = $this->request->getParam('password');
             $name = $this->request->getParam('name');
 
-            if (isset($email, $password, $name) && !empty($email) && !empty($password) && !empty($name)) {
+            if (!empty($email) && !empty($password) && !empty($name)) {
                 $data = [
                     'email' => $email,
                     'password' => $password,
@@ -53,6 +54,9 @@ class IndexController extends Controller
 
     public function loginAction()
     {
+        //print_r($this->session->get(5));
+        //print_r($_SESSION);
+
         if (!$this->auth->isGuest()) {
             $this->redirect('/web/index/index'); //must be return url
         }
@@ -65,10 +69,15 @@ class IndexController extends Controller
 
             if (!empty($email) && !empty($password) && $model->login($email, $password)) {
                 $this->auth->login($model->userId);
-                $this->redirect('/web/user/index');
+                $this->redirect('/web/user/cabinet');
             } else {
                 $this->redirect('/web/index/login');
             }
+            print_r($this->session->get(5));
+            print_r($_SESSION);
+
+            session_start();
+            $_SESSION['auth'] = md5(5);
         }
 
         $this->view->render('index/login');
@@ -80,6 +89,7 @@ class IndexController extends Controller
     public function logoutAction()
     {
         $this->auth->logout();
-        $this->redirect('/web/index/index');
+        print_r($_SESSION);
+        //$this->redirect('/web/index/index');
     }
 }

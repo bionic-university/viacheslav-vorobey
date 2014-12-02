@@ -17,11 +17,14 @@ use BionicUniversity\Eventmapia\Core\Session;
  */
 class Auth
 {
-    /** @var */
-    private $loggedOut;
+    /** @var bool $loggedIn */
+    private $loggedIn;
 
-    /** @var */
+    /** @var object $session */
     private $session;
+
+    /** @var int $user */
+    private $user;
 
     /**
      * Construct
@@ -37,9 +40,17 @@ class Auth
      */
     public function isGuest()
     {
-        return $this->loggedOut;
+        if ($this->session->get($this->user)) {
+
+            print_r($this->user);
+            return false;
+        }
+
+        print_r($this->user);
+        return true;
+
     }
-    
+
     /**
      * @param int $userId
      * @return void
@@ -47,7 +58,9 @@ class Auth
     public function login($userId)
     {
         $this->session->set($userId, $this->generateHash($userId));
-        $this->loggedOut = false;
+
+        $this->user = $userId;
+        $this->loggedIn = true;
     }
 
     /**
@@ -55,8 +68,10 @@ class Auth
      */
     public function logout()
     {
-        $this->session->remove($this->getName());
-        $this->loggedOut = true;
+        $this->session->remove($this->getUser());
+
+        $this->user = null;
+        $this->loggedIn = false;
     }
 
     /**
@@ -67,5 +82,14 @@ class Auth
     public function generateHash($param)
     {
         return sha1($param);
+    }
+
+    /**
+     * Get user ID
+     * @return int
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

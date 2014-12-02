@@ -1,64 +1,38 @@
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>Hotline</title>
-    <link rel="stylesheet" href="<?php echo URL;?>public/css/foundation.min.css" />
-	
-	<style type="text/css">
-		.container {
-			width:940px;
-			margin:0 auto;
-		}
-		.content {
-			margin-top:30px;
-		}
-		.required {
-			color:#ff0000;
-			font-weight:bold;
-		}
-	</style>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="http://bionic.dev/web/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://bionic.dev/web/css/styles.css" rel="stylesheet">
 </head>
 
 <body>
-	
-	<?php $url = trim($_SERVER['REQUEST_URI'], '/'); ?>
-	<nav class="top-bar">
-		<div class="container">	
-			<section class="top-bar-section">
-				<ul class="left">
-					<li class="<?php echo $url == 'articles' ? 'active' : ''; ?>"><a href="/">Список статей</a></li>
-					<li class="<?php echo $url == 'articles/add' ? 'active' : ''; ?>"><a href="/articles/add">Добавить статью</a></li>
-				</ul>
-				<ul class="right">
-					<li class="<?php echo $url == 'task' ? 'active' : ''; ?>"><a href="/task">Тестовое задание</a></li>
-				</ul>
-			</section>
-		</div>
-	</nav>
-	
-	<div class="container content row">
-		
-		<?php require 'app/views/' . $name . '.php'; ?>
-		
-	</div>
 
-	<script src="<?php echo URL;?>public/js/jquery.js"></script>
-	<script src="<?php echo URL;?>public/js/foundation.js"></script>		
-	
-	<script>
-		$(document).foundation();
-		
-		$(function () {
-			$('#date').fdatepicker({
-				format: 'dd.mm.yyyy'
-			});
-		});
-	</script>
+    <div class="navbar navbar-custom navbar-fixed-top">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/"><img src="http://bionic.dev/web/images/logo.png" /></a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/web/events/index">Events</a></li>
+                <li><a href="#">Add event</a></li>
+                <li><a href="/web/index/registration">Registration</a></li>
+                <li><a href="/web/index/login">Login</a></li>
+                <li>&nbsp;</li>
+            </ul>
+        </div>
+    </div>
 
-  
+
+    <div class="content" id="main">
+
+        <?php require_once $name . '.php'; ?>
+
+    </div>
+
+
 </body>
 </html>

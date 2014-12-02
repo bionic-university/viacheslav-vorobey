@@ -4,7 +4,7 @@
  *
  * @author vorobeyme
  * @package Core
- * @link https://github.com/bionic-university/viacheslav-vorobey/project
+ * @link https://github.com/bionic-university/viacheslav-vorobey/tree/master/project
  */
  
 namespace BionicUniversity\Eventmapia\Core;
@@ -37,13 +37,19 @@ class View
     } 
     
     /**
-     * Render 
+     * New render
+     * Get the evaluated contents of the view
+     *
+     * @param string $path
+     * @param array $data
      * @throws \Exception
      * @return string
      */
-    function assign($name)
+    function get($path, array $data = [])
     {
         ob_start();
+        extract($data);
+
         try {
             if (!file_exists($this->viewPath . DIRECTORY_SEPARATOR . $this->layout) or
                 !is_file($this->viewPath . DIRECTORY_SEPARATOR . $this->layout)) {
@@ -54,6 +60,7 @@ class View
             ob_end_clean();
             return '';
         }
+
         return ob_get_clean();
     }
 

@@ -1,3 +1,5 @@
+<?php $url = trim($_SERVER['REQUEST_URI'], '/'); ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,16 +15,22 @@
 </head>
 <body>
 
+<?php
+
+
+
+?>
+
 <div class="navbar navbar-custom navbar-fixed-top">
     <div class="navbar-header">
         <a class="navbar-brand" href="/"><img src="http://bionic.dev/web/images/logo.png" /></a>
     </div>
     <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-            <li class="active"><a href="/web/events/index">Events</a></li>
-            <li><a href="#">Add event</a></li>
-            <li><a href="/web/index/registration">Registration</a></li>
-            <li><a href="/web/index/login">Login</a></li>
+            <li class="<?= $url == 'web/index/index' ? 'active' : ''; ?>"><a href="/web/index/index">Events</a></li>
+            <li class="<?= $url == 'web/events/add' ? 'active' : ''; ?>"><a href="/web/events/add">Add event</a></li>
+            <li class="<?= $url == 'web/index/registration' ? 'active' : ''; ?>"><a href="/web/index/registration">Registration</a></li>
+            <li class="<?= $url == 'web/index/login' ? 'active' : ''; ?>"><a href="/web/index/login">Login</a></li>
             <li>&nbsp;</li>
         </ul>
         <form class="navbar-form">

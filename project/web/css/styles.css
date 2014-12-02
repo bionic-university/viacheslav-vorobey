@@ -104,3 +104,19 @@ a.desc:after { content: /*"\e114"*/ "\e152"; }
     bottom:0;
     overflow:hidden;
 }
+
+span.list-group-item-heading {
+    margin-bottom: 0;
+    font-weight: 400;
+    font-size: 17px;
+}
+
+.list-group-item:first-child {
+    background-color: #f9f2f4;
+}
+
+li.list-group-item .label {
+    padding: .5em .8em .4em;
+    font-size: 85%;
+    font-weight: 400;
+}
