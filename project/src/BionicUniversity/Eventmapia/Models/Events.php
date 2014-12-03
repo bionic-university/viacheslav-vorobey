@@ -58,6 +58,7 @@ class Events extends Model
     /**
      * Add new event to DB
      * @param array $data
+     * @return 
      */
     public function addEvent(array $data)
     {
@@ -66,15 +67,39 @@ class Events extends Model
         $data['created_time'] = date('Y-m-d H:i:s');
         $data['user_id'] = 5;
 
-        $this->db->insert('event', $data);
+        return $this->db->insert('event', $data);
     }
 
     /**
-     * @param int $id
+     * Accept event
+     * @param int $eventId
+     * @param int $userId
+     * @return 
      */
-    public function acceptEvent($id)
+    public function acceptEvent($eventId, $userId)
     {
-
+        return $this->db->insert('event_user', ['event_id' => $eventId, 'user_id' => $userId]);
     }
 
+    /**
+     * Cancel event
+     * @param int $eventId
+     * @param int $userId
+     * @return 
+     */
+    public function cancelEvent($eventId, $userId)
+    {
+        return $this->db->delete('event_user', ['event_id' => $eventId, 'user_id' => $userId]);
+    }
+
+    /**
+     * Delete event
+     * @param int $eventId
+     * @param int $userId
+     * @return 
+     */
+    public function deleteEvent($eventId)
+    {
+        return $this->db->delete('event', ['event_id' => $eventId]);
+    }
 }

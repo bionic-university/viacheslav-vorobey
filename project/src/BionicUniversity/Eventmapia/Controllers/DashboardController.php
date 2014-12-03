@@ -13,13 +13,14 @@ use BionicUniversity\Eventmapia\Core\Controller;
 /**
  * DashboardController
  */
-class DashboardController extends Controller
+class DashboardController extends BackendController
 {
     /**
      * Index action
      */
     public function indexAction()
     {
-        $this->view->render('dashboard/index');
+        $this->init();
+        $this->view->render('dashboard/dashboard/index');
     }
 }

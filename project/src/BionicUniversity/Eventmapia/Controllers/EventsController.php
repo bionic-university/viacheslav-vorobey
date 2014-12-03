@@ -88,11 +88,33 @@ class EventsController extends Controller
             throw new \Exception('Bad request');
         }
 
-        $id = abs((int) $id);
-        $model = $this->loadModel('events');
-        $model->acceptEvent($id);
+        $eventId = abs((int) $id);
+        //$userId
 
-        $this->redirect("/web/events/view/{$id}");
+        $model = $this->loadModel('events');
+        
+        if ($model->acceptEvent($eventId, $userId)) {
+            $this->redirect("/web/events/view/{$id}");
+        }
+    }
+
+    /**
+     * Cancel action
+     */
+    public function cancelAction($id = null)
+    {
+        if (is_null($id)) {
+            throw new \Exception('Bad request');
+        }
+
+        $eventId = abs((int) $id);
+        //$userId;
+
+        $model = $this->loadModel('events');
+        
+        if ($model->rejectEvent($eventId, $userId)) {
+            $this->redirect("/web/events/view/{$id}");
+        }
     }
 
     /**
@@ -106,8 +128,9 @@ class EventsController extends Controller
 
         $id = abs((int) $id);
         $model = $this->loadModel('events');
-        $model->deleteEvent($id);
-
-        $this->redirect("/web/events/view/{$id}");
+        
+        if ($model->deleteEvent($id)) {
+            $this->redirect("/web/index/index/");
+        }
     }
 }
