@@ -21,7 +21,7 @@ class EventsController extends Controller
      */
     public function indexAction()
     {
-        $this->view->render('events/index');
+        $this->redirect('/web/index/index');
     }
 
     /**
@@ -64,17 +64,50 @@ class EventsController extends Controller
     /**
      * View action
      * @param int $id
+     * @throws \Exception
      */
     public function viewAction($id = null)
     {
-        echo 'EventsController :: viewAction :: params ' . $id;
+        if (is_null($id)) {
+            throw new \Exception('Bad request');
+        }
+
+        $id = abs((int) $id);
+        $model = $this->loadModel('events');
+
+        $this->view->event = $model->getEvent($id);
+        $this->view->render('events/view');
     }
-    
+
+    /**
+     * Accept action
+     */
+    public function acceptAction($id = null)
+    {
+        if (is_null($id)) {
+            throw new \Exception('Bad request');
+        }
+
+        $id = abs((int) $id);
+        $model = $this->loadModel('events');
+        $model->acceptEvent($id);
+
+        $this->redirect("/web/events/view/{$id}");
+    }
+
     /**
      * Delete action
      */
-    public function deleteAction($id)
+    public function deleteAction($id = null)
     {
-        
+        if (is_null($id)) {
+            throw new \Exception('Bad request');
+        }
+
+        $id = abs((int) $id);
+        $model = $this->loadModel('events');
+        $model->deleteEvent($id);
+
+        $this->redirect("/web/events/view/{$id}");
     }
 }

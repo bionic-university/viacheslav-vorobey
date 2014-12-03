@@ -12,9 +12,9 @@
                 </li>
                 <li class="list-group-item">
                     <?= $event['description']; ?>
-                    <hr> <span>Created by: <a href="#" class="text-info">John Doe</a></span>
-                    <span class="pull-right" style="margin-top: -7px;">
-                        <a href="#" class="btn btn-default" style="padding: 3px 20px;">Join</a>
+                    <hr> <span>Created by: <a href="/web/user/view/<?= $event['user_id']; ?>" class="text-info"><?= $event['username']; ?></a></span>
+                    <span class="pull-right" style="margin-top: -4px;">
+                        <a href="/web/events/view/<?= $event['id']; ?>" class="btn btn-default" style="padding: 3px 20px;">More</a>
                     </span>
 
 

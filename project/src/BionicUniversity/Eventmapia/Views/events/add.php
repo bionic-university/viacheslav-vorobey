@@ -1,4 +1,4 @@
-<div class="container-fluid" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<div class="container-fluid">
     <div class="row">
 
         <div class="col-xs-6" style="padding-top: 20px;">
@@ -10,7 +10,7 @@
                             <input class="form-control" type="text" name="title" placeholder="Title" />
                         </div>
                         <div class="col-xs-4">
-                            <input class="form-control" type="text" name="date_start" placeholder="dd/mm/yy" />
+                            <input class="form-control" type="text" name="date" placeholder="dd/mm/yy" />
                         </div>
                     </div>
 

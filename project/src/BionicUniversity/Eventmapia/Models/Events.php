@@ -15,45 +15,66 @@ use BionicUniversity\Eventmapia\Core\Model;
  */
 class Events extends Model
 {
+    /**
+     * Get all events
+     * @return array $result
+     * @throws \Exception
+     */
     public function getAllEvents()
     {
-        $result = $this->db->fetchAll('SELECT * FROM `event`');
+        $sql = 'SELECT e.id, e.title, e.description, e.date, e.user_id, u.username
+                FROM event e
+                LEFT JOIN user u ON e.user_id = u.id';
+        $result = $this->db->fetchAll($sql);
 
-        if (!count($result)) {
-            return false;
+        if (!$result) {
+            throw new \Exception("Events doesn't exist");
         }
 
         return $result;
     }
 
+    /**
+     * Get one event
+     * @param int $id
+     * @return array $result
+     * @throws \Exception
+     */
     public function getEvent($id)
     {
-        $result = $this->db->fetchRow('SELECT * FROM `event` WHERE id = :id', ['id' => $id]);
+        $sql = 'SELECT e.id, e.title, e.description, e.date, e.user_id, u.username
+                FROM event e
+                LEFT JOIN user u ON e.user_id = u.id
+                WHERE e.id = :id';
+        $result = $this->db->fetchRow($sql, ['id' => $id]);
+
+        if (!$result) {
+            throw new \Exception("Event doesn't exist");
+        }
 
         return $result;
     }
 
+    /**
+     * Add new event to DB
+     * @param array $data
+     */
     public function addEvent(array $data)
     {
+        // Prepare data
+        $data['date'] = date('Y-m-d H:i:s');
+        $data['created_time'] = date('Y-m-d H:i:s');
+        $data['user_id'] = 5;
 
-        $title = $data['title'];
-        $description = $data['description'];
-        $date = date('Y-m-d H:i:s');
-        $created_time = date('Y-m-d H:i:s');
-        $user_id = 5;
+        $this->db->insert('event', $data);
+    }
 
-        $sql = "INSERT INTO `event` (`title`, `description`, `date`, `created_time`, `user_id`)
-                       VALUES (:title, :description, :date, :created_time, :user_id)";
-        $params = [
-            'title' => $title,
-            'description' => $description,
-            'date' => $date,
-            'created_time' => $created_time,
-            'user_id' => $user_id
-        ];
-
-        $res = $this->db->query($sql, $params, ['user_id' => \PDO::PARAM_INT]);
-        print_r($res);
+    /**
+     * @param int $id
+     */
+    public function acceptEvent($id)
+    {
 
     }
+
 }
