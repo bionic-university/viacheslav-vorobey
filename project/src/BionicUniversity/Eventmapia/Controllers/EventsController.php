@@ -9,7 +9,6 @@
 namespace BionicUniversity\Eventmapia\Controllers;
 
 use BionicUniversity\Eventmapia\Core\Controller;
-use BionicUniversity\Eventmapia\Models\Events;
 
 /**
  * EventsController
@@ -55,6 +54,7 @@ class EventsController extends Controller
 
     /**
      * Edit action
+     * @param int id
      */
     public function editAction($id)
     {
@@ -72,6 +72,8 @@ class EventsController extends Controller
             throw new \Exception('Bad request');
         }
 
+        //if (isset($_POST['func']) and !empty($_POST['func'])) echo "Сообщение отправлено!";
+
         $id = abs((int) $id);
         $model = $this->loadModel('events');
 
@@ -81,6 +83,8 @@ class EventsController extends Controller
 
     /**
      * Accept action
+     * @param int $id
+     * @throws \Exception
      */
     public function acceptAction($id = null)
     {
@@ -89,17 +93,18 @@ class EventsController extends Controller
         }
 
         $eventId = abs((int) $id);
-        //$userId
+        $userId = 1;
 
         $model = $this->loadModel('events');
-        
-        if ($model->acceptEvent($eventId, $userId)) {
-            $this->redirect("/web/events/view/{$id}");
-        }
+
+        $model->acceptEvent($eventId, $userId);
+        $this->redirect("/web/events/view/{$id}");
     }
 
     /**
      * Cancel action
+     * @param int $id
+     * @throws \Exception
      */
     public function cancelAction($id = null)
     {
@@ -112,13 +117,15 @@ class EventsController extends Controller
 
         $model = $this->loadModel('events');
         
-        if ($model->rejectEvent($eventId, $userId)) {
+        if ($model->cancelEvent($eventId, $userId)) {
             $this->redirect("/web/events/view/{$id}");
         }
     }
 
     /**
      * Delete action
+     * @param int $id
+     * @throws \Exception
      */
     public function deleteAction($id = null)
     {
@@ -128,9 +135,11 @@ class EventsController extends Controller
 
         $id = abs((int) $id);
         $model = $this->loadModel('events');
-        
-        if ($model->deleteEvent($id)) {
-            $this->redirect("/web/index/index/");
-        }
+
+        $model->deleteEvent($id);
+
+        //if ($model->deleteEvent($id)) {
+        //    $this->redirect("/web/index/index/");
+        //}
     }
 }
