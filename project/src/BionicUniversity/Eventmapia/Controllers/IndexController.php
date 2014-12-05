@@ -54,9 +54,6 @@ class IndexController extends Controller
 
     public function loginAction()
     {
-        //print_r($this->session->get(5));
-        //print_r($_SESSION);
-
         if (!$this->auth->isGuest()) {
             $this->redirect('/web/index/index'); //must be return url
         }
@@ -69,15 +66,10 @@ class IndexController extends Controller
 
             if (!empty($email) && !empty($password) && $model->login($email, $password)) {
                 $this->auth->login($model->userId);
-                $this->redirect('/web/user/cabinet');
+                $this->redirect('/web/index/registration');
             } else {
                 $this->redirect('/web/index/login');
             }
-            print_r($this->session->get(5));
-            print_r($_SESSION);
-
-            session_start();
-            $_SESSION['auth'] = md5(5);
         }
 
         $this->view->render('index/login');
@@ -89,7 +81,6 @@ class IndexController extends Controller
     public function logoutAction()
     {
         $this->auth->logout();
-        print_r($_SESSION);
-        //$this->redirect('/web/index/index');
+        $this->redirect('/web/index/index');
     }
 }

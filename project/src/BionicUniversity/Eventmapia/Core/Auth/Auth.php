@@ -18,13 +18,13 @@ use BionicUniversity\Eventmapia\Core\Session;
 class Auth
 {
     /** @var bool $loggedIn */
-    private $loggedIn;
+    public $loggedIn;
 
     /** @var object $session */
     private $session;
 
     /** @var int $user */
-    private $user;
+    public $user;
 
     /**
      * Construct
@@ -40,15 +40,11 @@ class Auth
      */
     public function isGuest()
     {
-        if ($this->session->get($this->user)) {
-
-            print_r($this->user);
+        if ($this->session->get('user_agent') == $this->getUserAgent() && $this->session->get('user_id')) {
             return false;
         }
 
-        print_r($this->user);
         return true;
-
     }
 
     /**
@@ -57,7 +53,9 @@ class Auth
      */
     public function login($userId)
     {
-        $this->session->set($userId, $this->generateHash($userId));
+        $this->session->set('user_id', $this->generateHash($userId));
+        $this->session->set('uid', $userId);
+        $this->session->set('user_agent', $this->getUserAgent());
 
         $this->user = $userId;
         $this->loggedIn = true;
@@ -68,7 +66,9 @@ class Auth
      */
     public function logout()
     {
-        $this->session->remove($this->getUser());
+        $this->session->remove('user_id');
+        $this->session->remove('user_agent');
+        $this->session->remove('uid');
 
         $this->user = null;
         $this->loggedIn = false;
@@ -81,15 +81,15 @@ class Auth
      */
     public function generateHash($param)
     {
-        return sha1($param);
+        return md5($param);
     }
 
     /**
-     * Get user ID
-     * @return int
+     * Get user agent
+     * @return string
      */
-    public function getUser()
+    public function getUserAgent()
     {
-        return $this->user;
+        return $this->generateHash($_SERVER['HTTP_USER_AGENT']);
     }
 }

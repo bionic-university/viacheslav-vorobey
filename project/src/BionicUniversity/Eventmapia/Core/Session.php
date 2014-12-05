@@ -35,9 +35,9 @@ class Session
     {
         $this->start();
 
-        if (!isset($_SESSION[$key])) {
+        //if (!isset($_SESSION[$key])) {
             $_SESSION[$key] = $value;
-        }
+        //}
     }
 
     /**
@@ -46,6 +46,8 @@ class Session
      */
     public function get($key)
     {
+        $this->start();
+
         if (isset($_SESSION[$key])) {
             return $_SESSION[$key];
         } else {
