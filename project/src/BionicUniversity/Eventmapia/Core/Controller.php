@@ -44,6 +44,8 @@ class Controller
 
         $this->auth = new Auth();
         $this->session = new Session();
+
+        session_start();
     }
     
     /**

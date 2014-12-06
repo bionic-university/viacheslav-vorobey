@@ -19,14 +19,37 @@
 
 
             <div class="leave-comment-container">
-                <form method="post" action="" name="leave-comment-form">
+                <form method="post" action="/web/events/addcomment" name="leave-comment-form">
                     <strong>Comments:</strong>
                     <small><a href="#" class="leave-comment-link" style="text-decoration: underline;">Leave a comment</a></small>
-                    <textarea rows="2" class="form-control leave-comment-textarea"></textarea>
+                    <textarea name="comment" rows="2" class="form-control leave-comment-textarea"></textarea>
+                    <input type="hidden" name="event_id" value="<?= $this->event['id']; ?>">
                     <button class="btn btn-sm btn-primary leave-comment-btn" type="submit" style="margin-top: 5px;">Submit</button>
-                </form>
-                <hr>
+                </form> <br>
+
+                <div class="panel-default">
+                <?php $i = 1; foreach ($this->comments as $comment) : ?>
+
+                    <div class="panel-heading" style="padding: 6px 10px;">
+                        <span class="text-muted">#<?= $i; ?></span>
+                        <span>
+                            <a href="/web/user/view/<?= $comment['user_id']; ?>" class="text-info" style="font-size: 13px;">
+                                <?= $comment['username']; ?>
+                            </a>
+                        </span>
+                        <span class="pull-right text-muted">
+                            <small><?= $comment['created_time']; ?></small>
+                        </span>
+                    </div>
+                    <p style="padding: 10px 5px 20px; font-size: 13px;">
+                        <?= $comment['text']; ?>
+                    </p>
+
+                <?php $i++; endforeach; ?>
+                </div>
             </div>
+
+
 
 
         </div>

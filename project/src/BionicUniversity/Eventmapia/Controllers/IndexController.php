@@ -55,7 +55,7 @@ class IndexController extends Controller
     public function loginAction()
     {
         if (!$this->auth->isGuest()) {
-            $this->redirect('/web/index/index'); //must be return url
+            $this->redirect('/web/index/index');
         }
 
         $model = $this->loadModel('user');
@@ -66,7 +66,7 @@ class IndexController extends Controller
 
             if (!empty($email) && !empty($password) && $model->login($email, $password)) {
                 $this->auth->login($model->userId);
-                $this->redirect('/web/index/registration');
+                $this->redirect('/web/index/index');
             } else {
                 $this->redirect('/web/index/login');
             }
@@ -76,7 +76,7 @@ class IndexController extends Controller
     }
 
     /**
-     * Logout the current user and redirect to homepage.
+     * Logout the current user and redirect to homepage
      */
     public function logoutAction()
     {

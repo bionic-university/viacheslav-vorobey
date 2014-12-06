@@ -76,8 +76,10 @@ class EventsController extends Controller
 
         $id = abs((int) $id);
         $model = $this->loadModel('events');
+        $comments = $this->loadModel('comment');
 
         $this->view->event = $model->getEvent($id);
+        $this->view->comments = $comments->getComments($id);
         $this->view->render('events/view');
     }
 
@@ -141,5 +143,29 @@ class EventsController extends Controller
         //if ($model->deleteEvent($id)) {
         //    $this->redirect("/web/index/index/");
         //}
+    }
+
+    public function addcommentAction()
+    {
+        $model = $this->loadModel('comment');
+
+        if ($this->request->isPost()) {
+            $comment = $this->request->getParam('comment');
+            $eventId = $this->request->getParam('event_id');
+
+            if (!empty($comment) && !empty($eventId)) {
+                $data = [
+                    'text' => $comment,
+                    'user_id' => 2,
+                    'event_id' => $eventId,
+                ];
+                $model->addComment($data);
+                $this->redirect('/web/events/view/' . $eventId);
+            }
+
+            $this->redirect('/web/events/view/' . $eventId);
+        }
+
+        return false;
     }
 }
