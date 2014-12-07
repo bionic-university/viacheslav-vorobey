@@ -9,6 +9,16 @@
 namespace BionicUniversity\Eventmapia\Controllers;
 
 use BionicUniversity\Eventmapia\Core\Controller;
+use Ivory\GoogleMap\Base\Coordinate;
+use Ivory\GoogleMap\Helper\MapHelper;
+use Ivory\GoogleMap\Helper\Places\AutocompleteHelper;
+use Ivory\GoogleMap\Map;
+use Ivory\GoogleMap\Overlays\InfoWindow;
+use Ivory\GoogleMap\Overlays\Marker;
+use Ivory\GoogleMap\Overlays\Polygon;
+use Ivory\GoogleMap\Places\Autocomplete;
+use Ivory\GoogleMap\Places\AutocompleteComponentRestriction;
+use Ivory\GoogleMap\Places\AutocompleteType;
 
 /**
  * EventsController
@@ -29,6 +39,73 @@ class EventsController extends Controller
     public function addAction()
     {
         $model = $this->loadModel('events');
+
+       
+        $map = new Map();
+
+        // Configure map
+        $map->setPrefixJavascriptVariable('map_');
+        $map->setHtmlContainerId('map-canvas-add');
+
+        // Set the position (default: Ukraine)
+        $position = new Coordinate(48.8, 31, true);
+        $map->setCenter($position);
+        $map->setMapOption('zoom', 6);
+
+        $map->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
+        $map->setMapOption('mapTypeId', 'roadmap');
+
+        $map->setMapOptions(array(
+            'disableDefaultUI'       => true,
+            'disableDoubleClickZoom' => true,
+        ));
+
+        $map->setStylesheetOptions(array(
+            'width'     => '58%',
+            'height'    => 'calc(100% - 0)',
+            'position'  => 'absolute',
+            'right'     => '4px',
+            'top'       => '50px',
+            'bottom'    => '2px',
+            'overflow'  => 'hidden',
+        ));
+
+        /** Build marker */
+        $positionKyiv = new Coordinate(50.43, 30.52, true);
+        $marker = new Marker($positionKyiv, 'drop', null, null, null, new InfoWindow());
+        $marker->setOptions(array(
+            'clickable' => false,
+            'flat'      => true,
+        ));
+
+        $map->addMarker($marker);
+
+
+        // Autocomplete
+        $autocomplete = new Autocomplete();
+        $autocomplete->setPrefixJavascriptVariable('place_autocomplete_');
+        $autocomplete->setInputId('place-autocomplete-input');
+
+        $autocomplete->setTypes(array(AutocompleteType::ESTABLISHMENT));
+        $autocomplete->setComponentRestrictions(array(AutocompleteComponentRestriction::COUNTRY => 'ua'));
+        $autocomplete->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
+
+        $autocomplete->setAsync(false);
+        $autocomplete->setLanguage('uk');
+
+        $autocompleteHelper = new AutocompleteHelper();
+
+        $this->view->script = $autocompleteHelper->renderJavascripts($autocomplete);
+
+
+        /** Set default language as Ukrainian */
+        $map->setLanguage('uk');
+
+
+        /** Render map */
+        $mapHelper = new MapHelper();
+        $this->view->map = $mapHelper->render($map);
+
 
         if ($this->request->isPost()) {
             $title = $this->request->getParam('title');
@@ -77,6 +154,61 @@ class EventsController extends Controller
         $id = abs((int) $id);
         $model = $this->loadModel('events');
         $comments = $this->loadModel('comment');
+
+
+
+        $map = new Map();
+
+        // Configure map
+        $map->setPrefixJavascriptVariable('map_');
+        $map->setHtmlContainerId('map-canvas-view');
+
+        $map->setAsync(false);
+        $map->setAutoZoom(false);
+
+        // Set the position (default: Kyiv)
+        $position = new Coordinate(50.43, 30.52, true);
+
+        $map->setCenter($position);
+        $map->setMapOption('zoom', 10);
+
+        $map->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
+        $map->setMapOption('mapTypeId', 'roadmap');
+
+        $map->setMapOptions(array(
+            'disableDefaultUI'       => true,
+            'disableDoubleClickZoom' => true,
+        ));
+
+        $map->setStylesheetOptions(array(
+            'width'     => '58%',
+            'height'    => 'calc(100% - 0)',
+            'position'  => 'absolute',
+            'right'     => '4px',
+            'top'       => '50px',
+            'bottom'    => '2px',
+            'overflow'  => 'hidden',
+        ));
+
+        /** Build marker */
+        $marker = new Marker($position, 'drop', null, null, null, new InfoWindow());
+        $marker->setOptions(array(
+            'clickable' => false,
+            'flat'      => true,
+        ));
+
+        $map->addMarker($marker); //bounce
+
+        /** Set default language as Ukrainian */
+        $map->setLanguage('uk');
+
+
+        /** Render map */
+        $mapHelper = new MapHelper();
+        $this->view->map = $mapHelper->render($map);
+
+
+
 
         $this->view->event = $model->getEvent($id);
         $this->view->comments = $comments->getComments($id);

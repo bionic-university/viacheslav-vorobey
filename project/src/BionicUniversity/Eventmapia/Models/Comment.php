@@ -23,7 +23,8 @@ class Comment extends Model
         $sql = 'SELECT c.id, c.text, c.created_time, c.user_id, u.username
                 FROM comment c
                 LEFT JOIN user u ON c.user_id = u.id
-                WHERE c.event_id = :event_id';
+                WHERE c.event_id = :event_id
+                ORDER BY c.created_time DESC';
         $result = $this->db->fetchAll($sql, [':event_id' => $eventId]);
 
         return $result;

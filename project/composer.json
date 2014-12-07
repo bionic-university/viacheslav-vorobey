@@ -1,7 +1,10 @@
 {
     "name": "vorobeyme/simplemvc",
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+	"egeloen/google-map": "dev-master",
+	"widop/http-adapter": "~1.1.0",
+        "willdurand/geocoder": "~2.0"
     },
     "autoload": {
         "psr-4": {
