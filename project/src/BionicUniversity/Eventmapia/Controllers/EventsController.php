@@ -40,73 +40,6 @@ class EventsController extends Controller
     {
         $model = $this->loadModel('events');
 
-       
-        $map = new Map();
-
-        // Configure map
-        $map->setPrefixJavascriptVariable('map_');
-        $map->setHtmlContainerId('map-canvas-add');
-
-        // Set the position (default: Ukraine)
-        $position = new Coordinate(48.8, 31, true);
-        $map->setCenter($position);
-        $map->setMapOption('zoom', 6);
-
-        $map->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
-        $map->setMapOption('mapTypeId', 'roadmap');
-
-        $map->setMapOptions(array(
-            'disableDefaultUI'       => true,
-            'disableDoubleClickZoom' => true,
-        ));
-
-        $map->setStylesheetOptions(array(
-            'width'     => '58%',
-            'height'    => 'calc(100% - 0)',
-            'position'  => 'absolute',
-            'right'     => '4px',
-            'top'       => '50px',
-            'bottom'    => '2px',
-            'overflow'  => 'hidden',
-        ));
-
-        /** Build marker */
-        $positionKyiv = new Coordinate(50.43, 30.52, true);
-        $marker = new Marker($positionKyiv, 'drop', null, null, null, new InfoWindow());
-        $marker->setOptions(array(
-            'clickable' => false,
-            'flat'      => true,
-        ));
-
-        $map->addMarker($marker);
-
-
-        // Autocomplete
-        $autocomplete = new Autocomplete();
-        $autocomplete->setPrefixJavascriptVariable('place_autocomplete_');
-        $autocomplete->setInputId('place-autocomplete-input');
-
-        $autocomplete->setTypes(array(AutocompleteType::ESTABLISHMENT));
-        $autocomplete->setComponentRestrictions(array(AutocompleteComponentRestriction::COUNTRY => 'ua'));
-        $autocomplete->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
-
-        $autocomplete->setAsync(false);
-        $autocomplete->setLanguage('uk');
-
-        $autocompleteHelper = new AutocompleteHelper();
-
-        $this->view->script = $autocompleteHelper->renderJavascripts($autocomplete);
-
-
-        /** Set default language as Ukrainian */
-        $map->setLanguage('uk');
-
-
-        /** Render map */
-        $mapHelper = new MapHelper();
-        $this->view->map = $mapHelper->render($map);
-
-
         if ($this->request->isPost()) {
             $title = $this->request->getParam('title');
             $date = $this->request->getParam('date');
@@ -157,6 +90,10 @@ class EventsController extends Controller
 
 
 
+
+
+        /////////////// M A P S //////////////////
+
         $map = new Map();
 
         // Configure map
@@ -206,6 +143,9 @@ class EventsController extends Controller
         /** Render map */
         $mapHelper = new MapHelper();
         $this->view->map = $mapHelper->render($map);
+
+        /////////////// M A P S //////////////////
+
 
 
 
