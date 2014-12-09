@@ -1,31 +1,93 @@
 <div class="container-fluid">
     <div class="row">
+
+        <?= $this->map; ?>
+
         <div class="col-xs-5">
             <br>
-            <ul class="list-group">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?= $this->event['title']; ?></h3>
+                </div>
+                <div class="panel-body">
+                    <?= nl2br($this->event['description']); ?>
+                    <br><br>
+
+                    <?php if (empty($this->event['routeFrom'])) : ?>
+                        <i class="glyphicon glyphicon-map-marker text-info"></i> <strong>Where: </strong> <?= $this->event['routeTo']; ?> <br>
+                    <?php else: ?>
+                        <i class="glyphicon glyphicon-map-marker text-info"></i> <strong>From: </strong> <?= $this->event['routeFrom']; ?> <br>
+                        <i class="glyphicon glyphicon-map-marker text-success"></i> <strong>To: </strong> <?= $this->event['routeTo']; ?> <br>
+                    <?php endif; ?>
+
+                    <?php if (!empty($this->event['routeVia'])) : ?>
+                        <strong>Via: </strong> Житомир, Рівне, Луцьк<?= $this->event['routeVia']; ?>
+                    <?php endif; ?>
+
+                    <i class="glyphicon glyphicon-time text-info"></i> <strong>Date/Time: </strong> <?= $this->event['date']; ?> <br>
+
+                    <hr>
+
+                    <strong>Who’s Attending: </strong> <br>
+                    <small><strong style="color: #555">Alex Morozoff, Dave Carnagge, Eve Elesson</strong></small>
+
+                    <hr>
+
+                    <span>Created by: <a href="/web/user/view/<?= $this->event['user_id']; ?>" class="text-info"><?= $this->event['username']; ?></a></span>
+                    <span class="pull-right" style="margin-top: -4px;">
+                        <a href="/web/events/accept/<?= $this->event['id']; ?>" class="btn-join btn btn-primary" style="padding: 3px 20px;"><i class="glyphicon glyphicon-thumbs-up"></i> Join</a>
+                    </span>
+                </div>
+            </div>
+
+            <!--ul class="list-group">
                 <li class="list-group-item active">
                     <span class="list-group-item-heading"> <?= $this->event['title']; ?> </span>
                     <span class="label label-success pull-right"><?= $this->event['date']; ?></span>
                 </li>
                 <li class="list-group-item">
+
                     <?= nl2br($this->event['description']); ?>
-                    <hr> <span>Created by: <a href="/web/user/view/<?= $this->event['user_id']; ?>" class="text-info"><?= $this->event['username']; ?></a></span>
+                    <br><br>
+
+                    <?php if (empty($this->event['routeFrom'])) : ?>
+                        <i class="glyphicon glyphicon-map-marker text-success"></i> <strong>Where: </strong> <?= $this->event['routeTo']; ?> <br>
+                    <?php else: ?>
+                        <i class="glyphicon glyphicon-map-marker text-info"></i> <strong>From: </strong> <?= $this->event['routeFrom']; ?> <br>
+                        <i class="glyphicon glyphicon-map-marker text-success"></i> <strong>To: </strong> <?= $this->event['routeTo']; ?> <br>
+                    <?php endif; ?>
+
+                    <?php if (!empty($this->event['routeVia'])) : ?>
+                        <strong>Via: </strong> Житомир, Рівне, Луцьк<?= $this->event['routeVia']; ?>
+                    <?php endif; ?>
+
+                    <hr>
+                    <span>Created by: <a href="/web/user/view/<?= $this->event['user_id']; ?>" class="text-info"><?= $this->event['username']; ?></a></span>
                     <span class="pull-right" style="margin-top: -4px;">
-                        <a href="/web/events/accept/<?= $this->event['id']; ?>" class="btn-join btn btn-primary" style="padding: 3px 20px;">Join</a>
+                        <a href="/web/events/accept/<?= $this->event['id']; ?>" class="btn-join btn btn-primary" style="padding: 3px 20px;"><i class="glyphicon glyphicon-thumbs-up"></i> Join</a>
                     </span>
                 </li>
-            </ul>
+            </ul-->
 
 
 
             <div class="leave-comment-container">
-                <form method="post" action="/web/events/addcomment" name="leave-comment-form">
-                    <strong>Comments:</strong>
-                    <small><a href="#" class="leave-comment-link" style="text-decoration: underline;">Leave a comment</a></small>
-                    <textarea name="comment" rows="2" class="form-control leave-comment-textarea"></textarea>
-                    <input type="hidden" name="event_id" value="<?= $this->event['id']; ?>">
-                    <button class="btn btn-sm btn-primary leave-comment-btn" type="submit" style="margin-top: 5px;">Submit</button>
-                </form> <br>
+
+                <?php if ($this->commmentsAccess) : ?>
+                    <form method="post" action="/web/events/addcomment" name="leave-comment-form">
+                        <strong>Comments:</strong>
+                        <small><a href="#" class="leave-comment-link" style="text-decoration: underline;">Leave a comment</a></small>
+                        <textarea name="comment" rows="2" class="form-control leave-comment-textarea"></textarea>
+                        <input type="hidden" name="event_id" value="<?= $this->event['id']; ?>">
+                        <button class="btn btn-sm btn-primary leave-comment-btn" type="submit" style="margin-top: 5px;">Submit</button>
+                    </form> <br>
+                <?php else : ?>
+                    <div class="alert alert-warning">
+                        <span>You must be logged in to leave a comment.</span>
+                        <a href="/web/index/login">Sign in</a>
+                    </div>
+                <?php endif; ?>
 
                 <div class="panel-default">
                 <?php $i = 1; foreach ($this->comments as $comment) : ?>
@@ -49,12 +111,9 @@
                 </div>
             </div>
 
-
-
-
         </div>
         <div class="col-xs-7">
-            <br> map must be here
+
         </div>
     </div>
 </div>
@@ -62,6 +121,12 @@
 
 <script>
     $(function() {
+
+        // Add event
+        $('#btn-add-via-point').click(function(e){
+            e.preventDefault();
+            alert(1111111);
+        });
 
         // test btn alert
         $('.btn-join').click(function(e){

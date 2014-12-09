@@ -11,14 +11,9 @@ namespace BionicUniversity\Eventmapia\Controllers;
 use BionicUniversity\Eventmapia\Core\Controller;
 use Ivory\GoogleMap\Base\Coordinate;
 use Ivory\GoogleMap\Helper\MapHelper;
-use Ivory\GoogleMap\Helper\Places\AutocompleteHelper;
 use Ivory\GoogleMap\Map;
 use Ivory\GoogleMap\Overlays\InfoWindow;
 use Ivory\GoogleMap\Overlays\Marker;
-use Ivory\GoogleMap\Overlays\Polygon;
-use Ivory\GoogleMap\Places\Autocomplete;
-use Ivory\GoogleMap\Places\AutocompleteComponentRestriction;
-use Ivory\GoogleMap\Places\AutocompleteType;
 
 /**
  * EventsController
@@ -38,18 +33,31 @@ class EventsController extends Controller
      */
     public function addAction()
     {
+        if ($this->auth->isGuest()) {
+            // @TODO: returnUrl
+            $this->session->set('returnUrl', '/web/events/add');
+            $this->redirect('/web/index/login');
+        }
+
         $model = $this->loadModel('events');
 
         if ($this->request->isPost()) {
-            $title = $this->request->getParam('title');
-            $date = $this->request->getParam('date');
-            $description = $this->request->getParam('description');
+            $params = $this->request->getParam();
 
-            if (!empty($title) && !empty($date) && !empty($description)) {
+            if (!empty($params['title']) && !empty($params['description']) && !empty($params['date']) && !empty($params['routeTo'])) {
+
+                $destinations = [
+                    'routeFrom' => $params['routeFrom'],
+                    'routeTo'   => $params['routeTo'],
+                    'routeMode' => $params['mode'][0]
+                ];
+
                 $data = [
-                    'title' => $title,
-                    'date' => $date,
-                    'description' => $description,
+                    'title' => $params['title'],
+                    'date' => $params['date'],
+                    'description' => $params['description'],
+                    'user_id' => $this->session->get('uid'),
+                    'destinations' => serialize($destinations),
                 ];
 
                 $model->addEvent($data);
@@ -88,11 +96,8 @@ class EventsController extends Controller
         $model = $this->loadModel('events');
         $comments = $this->loadModel('comment');
 
+        $event = $model->getEvent($id);
 
-
-
-
-        /////////////// M A P S //////////////////
 
         $map = new Map();
 
@@ -109,7 +114,7 @@ class EventsController extends Controller
         $map->setCenter($position);
         $map->setMapOption('zoom', 10);
 
-        $map->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
+        //$map->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
         $map->setMapOption('mapTypeId', 'roadmap');
 
         $map->setMapOptions(array(
@@ -144,14 +149,10 @@ class EventsController extends Controller
         $mapHelper = new MapHelper();
         $this->view->map = $mapHelper->render($map);
 
-        /////////////// M A P S //////////////////
 
-
-
-
-
-        $this->view->event = $model->getEvent($id);
+        $this->view->event = $event;
         $this->view->comments = $comments->getComments($id);
+        $this->view->commentsAccess = (bool)$this->session->get('user_id');
         $this->view->render('events/view');
     }
 

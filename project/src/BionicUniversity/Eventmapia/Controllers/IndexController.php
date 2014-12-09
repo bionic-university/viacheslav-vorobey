@@ -28,6 +28,10 @@ class IndexController extends Controller
 
     public function registrationAction()
     {
+        if (!$this->auth->isGuest()) {
+            $this->redirect('/web/index/index');
+        }
+
         $model = $this->loadModel('user');
 
         if ($this->request->isPost()) {
@@ -66,7 +70,15 @@ class IndexController extends Controller
 
             if (!empty($email) && !empty($password) && $model->login($email, $password)) {
                 $this->auth->login($model->userId);
-                $this->redirect('/web/index/index');
+
+                $returnUrl = $this->session->get('returnUrl');
+                if (isset($returnUrl)) {
+                    $this->redirect($this->session->get('returnUrl'));
+                    $this->session->remove('returnUrl');
+                } else {
+                    $this->redirect('/web/index/index');
+                }
+
             } else {
                 $this->redirect('/web/index/login');
             }

@@ -15,6 +15,8 @@ use BionicUniversity\Eventmapia\Core\Model;
  */
 class Events extends Model
 {
+    const ADMIN_ID = 1;
+
     /**
      * Get all events
      * @return array $result
@@ -24,7 +26,8 @@ class Events extends Model
     {
         $sql = 'SELECT e.id, e.title, e.description, e.date, e.user_id, u.username
                 FROM event e
-                LEFT JOIN user u ON e.user_id = u.id';
+                LEFT JOIN user u ON e.user_id = u.id
+                ORDER BY e.date DESC';
         $result = $this->db->fetchAll($sql);
 
         if (!$result) {
@@ -42,7 +45,7 @@ class Events extends Model
      */
     public function getEvent($id)
     {
-        $sql = 'SELECT e.id, e.title, e.description, e.date, e.user_id, u.username
+        $sql = 'SELECT e.id, e.title, e.description, e.destinations, e.date, e.user_id, u.username
                 FROM event e
                 LEFT JOIN user u ON e.user_id = u.id
                 WHERE e.id = :id';
@@ -51,6 +54,13 @@ class Events extends Model
         if (!$result) {
             throw new \Exception("Event doesn't exist");
         }
+
+        $destinations = unserialize($result['destinations']);
+        unset($result['destinations']);
+
+        $result['routeFrom'] = $destinations['routeFrom'];
+        $result['routeTo'] = $destinations['routeTo'];
+        $result['routeMode'] = $destinations['routeMode'];
 
         return $result;
     }
@@ -63,9 +73,9 @@ class Events extends Model
     public function addEvent(array $data)
     {
         // Prepare data
+        $data['user_id'] = !empty($data['user_id']) ? $data['user_id'] : self::ADMIN_ID;
         $data['date'] = date('Y-m-d H:i:s');
         $data['created_time'] = date('Y-m-d H:i:s');
-        $data['user_id'] = 5;
 
         return $this->db->insert('event', $data);
     }

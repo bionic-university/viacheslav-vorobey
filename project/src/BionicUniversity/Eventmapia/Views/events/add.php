@@ -1,13 +1,8 @@
-<div class="form-group">
-    <input type="text" name="routeFrom" placeholder="From" class="form-control" id="place-autocomplete-input" autocomplete="off">
-</div>
-
-<?= $this->script; ?>
-
 <div class="container-fluid">
     <div class="row">
 
-        <?= $this->map; ?>
+        <div id="map-canvas"></div>
+
         <div class="col-xs-5" style="padding-top: 10px;">
 
             <form action="/web/events/add" method="post">
@@ -17,13 +12,13 @@
                     </div>
                     <div class="panel-body">
                         <div class="form-group">
-                            <input type="text" class="form-control" name="title" placeholder="Title" />
+                            <input type="text" class="form-control" name="title" placeholder="Title">
                         </div>
                         <div class="form-group">
                             <textarea rows="5" class="form-control" name="description" placeholder="Description"></textarea>
                         </div>
                         <div class="form-inline">
-                            <input type="text" class="form-control" name="date" placeholder="Start date" />
+                            <input type="text" class="form-control" name="date" placeholder="Start date">
                             &nbsp;&nbsp;
                             <div class="checkbox">
                                 <label>
@@ -35,12 +30,20 @@
                         <hr>
 
                         <div class="form-group">
-                            <input type="text" name="routeFrom" placeholder="From" class="form-control" id="place-autocomplete-input1" autocomplete="off">
+                            <input type="text" name="routeFrom" placeholder="From" class="form-control" id="place-autocomplete-input1" autocomplete="off" onchange="calcRoute()">
                         </div>
                         <div class="form-group">
-                            <input type="text" name="routeTo" placeholder="To" class="form-control" id="place-autocomplete-input2">
+                            <input type="text" name="routeTo" placeholder="To" class="form-control" id="place-autocomplete-input2" onchange="calcRoute()">
                         </div>
-                        <a href="#" class="btn btn-default" id="btn-add-via-point">Add via point</a>
+                        <div class="form-inline">
+                            <a href="#" class="btn btn-default" id="btn-add-via-point">Add via point</a>
+                            <a href="#" class="btn btn-success" id="btn-add-refresh-direction"><!--i class="glyphicon glyphicon-refresh"></i--> Refresh direction</a>
+                            <div class="radio pull-right" style="padding-left: 20px;">
+                                <label> <input type="radio" class="form-control" name="mode[]" value="DRIVING" checked="checked" style="margin: 0"> Driving </label> &nbsp;&nbsp;
+                                <label> <input type="radio" class="form-control" name="mode[]" value="BICYCLING" style="margin: 0"> Bicycling </label> &nbsp;&nbsp;
+                                <label> <input type="radio" class="form-control" name="mode[]" value="WALKING" style="margin: 0"> Walking </label>
+                            </div>
+                        </div>
 
                         <hr>
 
@@ -48,92 +51,77 @@
                     </div>
                 </div>
             </form>
-
         </div>
 
-
-        <div class="col-xs-7">
-            <input id="pac-input" class="controls" type="text" placeholder="Enter a location" autocomplete="off" style="z-index: 0; position: absolute; left: 88px; top: 0px;">
-            <div id="type-selector" class="controls" style="z-index: 0; position: absolute; left: 488px; top: 0px;">
-                <input type="radio" name="type" id="changetype-all" checked="checked">
-                <label for="changetype-all">All</label>
-
-                <input type="radio" name="type" id="changetype-address">
-                <label for="changetype-address">Addresses</label>
-
-                <input type="radio" name="type" id="changetype-geocode">
-                <label for="changetype-geocode">Geocodes</label>
-            </div>
-        </div>
+        <div class="col-xs-7"> </div>
 
     </div>
 </div>
 
 
-<style>
-    .controls {
-        margin-top: 16px;
-        border: 1px solid transparent;
-        border-radius: 2px 0 0 2px;
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        height: 32px;
-        outline: none;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    }
-
-    #pac-input {
-        background-color: #fff;
-        padding: 0 11px 0 13px;
-        width: 400px;
-        font-family: Roboto;
-        font-size: 15px;
-        font-weight: 300;
-        text-overflow: ellipsis;
-    }
-
-    #type-selector {
-        color: #fff;
-        background-color: #4d90fe;
-        padding: 5px 11px 0px 11px;
-    }
-
-    #type-selector label {
-        font-weight: 300;
-        font-family: Roboto;
-    }
-</style>
-
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+<script src="/web/js/autocomplete.js"></script>
 <script>
-    $(function() {
 
-        function initialize() {
-            var routeFrom = document.getElementById('place-autocomplete-input1');
-            var routeTo = document.getElementById('place-autocomplete-input2');
-            var acFrom = new google.maps.places.Autocomplete(routeFrom);
-            var acTo = new google.maps.places.Autocomplete(routeTo);
-        }
-        google.maps.event.addDomListener(window, 'load', initialize);
-
-        // Add via point
-        $('#btn-add-via-point').click(function(e) {
-            e.preventDefault();
-
-            $(this).before('<div class="form-group"> <div class="form-inline">' +
-            '<input type="text" name="routeVia[]" placeholder="Via" class="form-control" style="width: 90%;">' +
-            '<a href="#" class="btn btn-danger btn-delete pull-right" style="font-size: 12px; line-height: 1.6;">x</a>' +
-            '</div></div>');
-        });
-
-        // Delete via point
-        $(document).on('click', '.btn-delete', function (e) {
-            e.preventDefault();
-            $(this).parent().parent().remove();
-        });
-
-
+    $(document).ready(function() {
+        Events.init();
     });
 
 </script>
 
+<script>
 
+    var directionsDisplay;
+    var directionsService = new google.maps.DirectionsService();
+    var map;
+    var routeFrom, routeTo;
+
+    function createObj() {
+        routeFrom = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input1'));
+        routeTo = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input2'));
+    }
+
+    function initialize() {
+        directionsDisplay = new google.maps.DirectionsRenderer();
+        var mapOptions = {
+            center: new google.maps.LatLng(48.5, 31.2),
+            zoom:6
+        };
+
+        //var routeFrom = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input1'));
+        //var routeTo = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input2'));
+        createObj();
+
+        //var autocompleteSearch = new google.maps.places.Autocomplete(searchField, searchOptions);
+
+        setInterval(function() {
+            var place = routeFrom.getPlace();
+            console.log('place: ');
+            console.log(place);
+        }, 5000);
+
+
+
+
+        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        directionsDisplay.setMap(map);
+    }
+
+    function calcRoute() {
+        var start = document.getElementById('place-autocomplete-input1').value;
+        var end = document.getElementById('place-autocomplete-input2').value;
+        var request = {
+            origin:start,
+            destination:end,
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+        directionsService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+            }
+        });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
