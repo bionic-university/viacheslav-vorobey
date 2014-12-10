@@ -9,11 +9,19 @@
 namespace BionicUniversity\Eventmapia\Controllers;
 
 use BionicUniversity\Eventmapia\Core\Controller;
+use Ivory\GoogleMap\Helper\Geometry\EncodingHelper;
+use Ivory\GoogleMap\Overlays\EncodedPolyline;
+use Ivory\GoogleMap\Services\Base\TravelMode;
+use Ivory\GoogleMap\Services\Base\UnitSystem;
+use Ivory\GoogleMap\Services\Directions\DirectionsRequest;
+use Widop\HttpAdapter\CurlHttpAdapter;
 use Ivory\GoogleMap\Base\Coordinate;
 use Ivory\GoogleMap\Helper\MapHelper;
 use Ivory\GoogleMap\Map;
 use Ivory\GoogleMap\Overlays\InfoWindow;
 use Ivory\GoogleMap\Overlays\Marker;
+use Ivory\GoogleMap\Services\Directions\Directions;
+
 
 /**
  * EventsController
@@ -98,28 +106,19 @@ class EventsController extends Controller
 
         $event = $model->getEvent($id);
 
-
+        /** Google Maps API */
         $map = new Map();
+        $markerPositions = [];
 
-        // Configure map
+        $map->setLanguage('uk');
+        $map->setAutoZoom(true);
         $map->setPrefixJavascriptVariable('map_');
         $map->setHtmlContainerId('map-canvas-view');
 
-        $map->setAsync(false);
-        $map->setAutoZoom(false);
-
-        // Set the position (default: Kyiv)
-        $position = new Coordinate(50.43, 30.52, true);
-
-        $map->setCenter($position);
-        $map->setMapOption('zoom', 10);
-
-        //$map->setBound(-2.1, -3.9, 2.6, 1.4, true, true);
-        $map->setMapOption('mapTypeId', 'roadmap');
-
         $map->setMapOptions(array(
-            'disableDefaultUI'       => true,
+            'disableDefaultUI' => true,
             'disableDoubleClickZoom' => true,
+            'mapTypeId' => 'roadmap',
         ));
 
         $map->setStylesheetOptions(array(
@@ -132,24 +131,97 @@ class EventsController extends Controller
             'overflow'  => 'hidden',
         ));
 
-        /** Build marker */
-        $marker = new Marker($position, 'drop', null, null, null, new InfoWindow());
-        $marker->setOptions(array(
-            'clickable' => false,
-            'flat'      => true,
-        ));
+        // Build directions
+        $request = new DirectionsRequest();
+        $request->setLanguage('uk');
+        $request->setUnitSystem(UnitSystem::METRIC);
+        $request->setTravelMode($event['routeMode']);
+        $request->setOrigin($event['routeFrom']);
+        $request->setDestination($event['routeTo']);
 
-        $map->addMarker($marker); //bounce
+        // $request->addWaypoint($event['routeVia']);
+        // $request->setOptimizeWaypoints(true);
+        // $request->setAvoidHighways(true);
+        // $request->setAvoidTolls(true);
+        // $request->setProvideRouteAlternatives(true);
 
-        /** Set default language as Ukrainian */
-        $map->setLanguage('uk');
+        $directions = new Directions(new CurlHttpAdapter());
+        $response = $directions->route($request);
+
+        if ($response->getStatus() === 'OK') {
+
+            $routes = $response->getRoutes();
+            foreach ($routes as $route) {
+
+                $overviewPolyline = $route->getOverviewPolyline();
+                //$waypointOrder = $route->getWaypointOrder();  // Get the waypoint order
+
+                $legs = $route->getLegs();
+                foreach ($legs as $leg) {
+                    // Gets the start location
+                    $startLocation = $leg->getStartLocation();
+                    $startLatitude = $startLocation->getLatitude();
+                    $startLongitude = $startLocation->getLongitude();
+
+                    // Gets the end location
+                    $endLocation = $leg->getEndLocation();
+                    $endLatitude = $endLocation->getLatitude();
+                    $endLongitude = $endLocation->getLongitude();
+
+                    $markerPositions = [
+                        'start' => [$startLatitude, $startLongitude],
+                        'end' => [$endLatitude, $endLongitude],
+                    ];
+
+                    $distance = $leg->getDistance(); // Gets the distance
+                    $leg->getDuration();             // Gets the duration
+                    $leg->getStartAddress();         // Gets the start address
+                    $leg->getEndAddress();           // Gets the end address
 
 
-        /** Render map */
+                    // Gets the directions steps.
+                    $steps = $leg->getSteps();
+                    foreach ($steps as $step) {
+                        $distance = $step->getDistance();           // Gets the distance.
+                        $duration = $step->getDuration();           // Gets the duration.
+                        $startLocation = $step->getStartLocation(); // Gets the start location.
+                        $endLocation = $step->getEndLocation();     // Gets the end location.
+                        $instructions = $step->getInstructions();   // Gets the instructions.
+                        $travelMode = $step->getTravelMode();       // Gets the travel mode.
+                    }
+                }
+            }
+
+            // Build marker
+            $positionStart = new Coordinate($startLatitude, $startLongitude, true);
+            $positionEnd = new Coordinate($endLatitude, $endLongitude, true);
+
+            $markerStart = new Marker($positionStart, 'drop', null, null, null, new InfoWindow());
+            $markerEnd = new Marker($positionEnd, 'drop', null, null, null, new InfoWindow());
+
+            $map->addMarker($markerStart);
+            $map->addMarker($markerEnd);
+
+            // Build Polyline
+            $encodedPolyline = new EncodedPolyline();
+            $encodedPolyline->setValue($overviewPolyline->getValue());
+            $encodedPolyline->setOptions(array(
+                'geodesic'    => true,
+                'strokeColor' => '#3079ed',
+                'strokeOpacity' => 0.8,
+                'strokeWeight' => 5
+            ));
+            $map->addEncodedPolyline($encodedPolyline);
+
+            // Kyiv
+            //$map->setCenter(new Coordinate(50.43, 30.52, true));
+            //$map->setMapOption('zoom', 10);
+        }
+
+        // Render map
         $mapHelper = new MapHelper();
+
         $this->view->map = $mapHelper->render($map);
-
-
         $this->view->event = $event;
         $this->view->comments = $comments->getComments($id);
         $this->view->commentsAccess = (bool)$this->session->get('user_id');
@@ -160,6 +232,8 @@ class EventsController extends Controller
      * Accept action
      * @param int $id
      * @throws \Exception
+     *
+     * @TODO: via Ajax
      */
     public function acceptAction($id = null)
     {
@@ -168,7 +242,7 @@ class EventsController extends Controller
         }
 
         $eventId = abs((int) $id);
-        $userId = 1;
+        $userId = (int) $this->session->get('uid');
 
         $model = $this->loadModel('events');
 
@@ -180,6 +254,8 @@ class EventsController extends Controller
      * Cancel action
      * @param int $id
      * @throws \Exception
+     *
+     * @TODO: via Ajax
      */
     public function cancelAction($id = null)
     {
@@ -188,7 +264,7 @@ class EventsController extends Controller
         }
 
         $eventId = abs((int) $id);
-        //$userId;
+        $userId = (int) $this->session->get('uid');
 
         $model = $this->loadModel('events');
         
@@ -212,10 +288,7 @@ class EventsController extends Controller
         $model = $this->loadModel('events');
 
         $model->deleteEvent($id);
-
-        //if ($model->deleteEvent($id)) {
-        //    $this->redirect("/web/index/index/");
-        //}
+        $this->redirect('/web/index/index/');
     }
 
     public function addcommentAction()
