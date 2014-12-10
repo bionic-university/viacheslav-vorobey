@@ -9,9 +9,7 @@
 namespace BionicUniversity\Eventmapia\Controllers;
 
 use BionicUniversity\Eventmapia\Core\Controller;
-use Ivory\GoogleMap\Helper\Geometry\EncodingHelper;
 use Ivory\GoogleMap\Overlays\EncodedPolyline;
-use Ivory\GoogleMap\Services\Base\TravelMode;
 use Ivory\GoogleMap\Services\Base\UnitSystem;
 use Ivory\GoogleMap\Services\Directions\DirectionsRequest;
 use Widop\HttpAdapter\CurlHttpAdapter;
@@ -108,7 +106,7 @@ class EventsController extends Controller
 
         /** Google Maps API */
         $map = new Map();
-        $markerPositions = [];
+        $markerPositions = $instructions = $commonInfo = [];
 
         $map->setLanguage('uk');
         $map->setAutoZoom(true);
@@ -139,6 +137,7 @@ class EventsController extends Controller
         $request->setOrigin($event['routeFrom']);
         $request->setDestination($event['routeTo']);
 
+        // @TODO: Do it
         // $request->addWaypoint($event['routeVia']);
         // $request->setOptimizeWaypoints(true);
         // $request->setAvoidHighways(true);
@@ -156,51 +155,38 @@ class EventsController extends Controller
                 $overviewPolyline = $route->getOverviewPolyline();
                 //$waypointOrder = $route->getWaypointOrder();  // Get the waypoint order
 
-                $legs = $route->getLegs();
-                foreach ($legs as $leg) {
-                    // Gets the start location
-                    $startLocation = $leg->getStartLocation();
-                    $startLatitude = $startLocation->getLatitude();
-                    $startLongitude = $startLocation->getLongitude();
-
-                    // Gets the end location
-                    $endLocation = $leg->getEndLocation();
-                    $endLatitude = $endLocation->getLatitude();
-                    $endLongitude = $endLocation->getLongitude();
-
+                foreach ($route->getLegs() as $leg) {
+                    // Set the start location & the end location into array
                     $markerPositions = [
-                        'start' => [$startLatitude, $startLongitude],
-                        'end' => [$endLatitude, $endLongitude],
+                        'start' => [$leg->getStartLocation()->getLatitude(), $leg->getStartLocation()->getLongitude()],
+                        'end' => [$leg->getEndLocation()->getLatitude(), $leg->getEndLocation()->getLongitude()],
                     ];
 
-                    $distance = $leg->getDistance(); // Gets the distance
-                    $leg->getDuration();             // Gets the duration
-                    $leg->getStartAddress();         // Gets the start address
-                    $leg->getEndAddress();           // Gets the end address
+                    $commonInfo = [
+                        'distance' => $leg->getDistance()->getText(), //getValue()
+                        'duration' => $leg->getDuration()->getText(), //getValue()
+                        'startAddress' => $leg->getStartAddress(),
+                        'endAddress' => $leg->getEndAddress(),
+                    ];
 
-
-                    // Gets the directions steps.
-                    $steps = $leg->getSteps();
-                    foreach ($steps as $step) {
-                        $distance = $step->getDistance();           // Gets the distance.
-                        $duration = $step->getDuration();           // Gets the duration.
-                        $startLocation = $step->getStartLocation(); // Gets the start location.
-                        $endLocation = $step->getEndLocation();     // Gets the end location.
-                        $instructions = $step->getInstructions();   // Gets the instructions.
-                        $travelMode = $step->getTravelMode();       // Gets the travel mode.
+                    // Set the directions steps
+                    foreach ($leg->getSteps() as $key => $step) {
+                        $instructions[$key] = [
+                            $step->getInstructions(),
+                            $step->getDistance()->getText(),
+                            $step->getDuration()->getText(),
+                            $step->getTravelMode(),
+                        ];
                     }
                 }
             }
 
-            // Build marker
-            $positionStart = new Coordinate($startLatitude, $startLongitude, true);
-            $positionEnd = new Coordinate($endLatitude, $endLongitude, true);
-
-            $markerStart = new Marker($positionStart, 'drop', null, null, null, new InfoWindow());
-            $markerEnd = new Marker($positionEnd, 'drop', null, null, null, new InfoWindow());
-
-            $map->addMarker($markerStart);
-            $map->addMarker($markerEnd);
+            // Build markers
+            foreach ($markerPositions as $latlng) {
+                $position = new Coordinate($latlng[0], $latlng[1], true);
+                $marker = new Marker($position, 'drop', null, null, null, new InfoWindow());
+                $map->addMarker($marker);
+            }
 
             // Build Polyline
             $encodedPolyline = new EncodedPolyline();
@@ -212,10 +198,6 @@ class EventsController extends Controller
                 'strokeWeight' => 5
             ));
             $map->addEncodedPolyline($encodedPolyline);
-
-            // Kyiv
-            //$map->setCenter(new Coordinate(50.43, 30.52, true));
-            //$map->setMapOption('zoom', 10);
         }
 
         // Render map
