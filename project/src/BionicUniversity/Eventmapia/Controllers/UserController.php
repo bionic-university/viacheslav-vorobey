@@ -45,9 +45,19 @@ class UserController extends Controller
 
     /**
      * View action
+     * @param int $id
+     * @throws \Exception
      */
-    public function viewAction($id)
+    public function viewAction($id = null)
     {
-        
+        if (is_null($id)) {
+            throw new \Exception('Bad request');
+        }
+
+        $id = abs((int) $id);
+        $model = $this->loadModel('user');
+
+        $this->view->user = $model->getUser($id);
+        $this->view->render('user/view');
     }
 }

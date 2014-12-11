@@ -30,51 +30,27 @@
                     <hr>
 
                     <strong>Who’s Attending: </strong> <br>
-                    <small><strong style="color: #555">Alex Morozoff, Dave Carnagge, Eve Elesson</strong></small>
+                    <small><strong style="color: #555">
+                    <? foreach ($this->attendingUsers as $user) : ?>
+                        <a href="/web/user/view/<?= $user['user_id']; ?>"><?= $user['username']; ?></a> &nbsp;
+                    <? endforeach; ?>
+                    </strong></small>
 
                     <hr>
 
                     <span>Created by: <a href="/web/user/view/<?= $this->event['user_id']; ?>" class="text-info"><?= $this->event['username']; ?></a></span>
                     <span class="pull-right" style="margin-top: -4px;">
-                        <a href="/web/events/accept/<?= $this->event['id']; ?>" class="btn-join btn btn-primary" style="padding: 3px 20px;"><i class="glyphicon glyphicon-thumbs-up"></i> Join</a>
+                        <?php if (!$this->isJoined) :?>
+                            <a href="/web/events/accept/<?= $this->event['id']; ?>" class="btn-join btn btn-primary" style="padding: 3px 20px;"><i class="glyphicon glyphicon-thumbs-up"></i> Join</a>
+                        <?php else : ?>
+                            <a href="/web/events/cancel/<?= $this->event['id']; ?>" class="btn-cancel btn btn-warning" style="padding: 3px 20px;"><i class="glyphicon glyphicon-thumbs-down"></i> Cancel</a>
+                        <?php endif; ?>
                     </span>
                 </div>
             </div>
 
-            <!--ul class="list-group">
-                <li class="list-group-item active">
-                    <span class="list-group-item-heading"> <?= $this->event['title']; ?> </span>
-                    <span class="label label-success pull-right"><?= $this->event['date']; ?></span>
-                </li>
-                <li class="list-group-item">
-
-                    <?= nl2br($this->event['description']); ?>
-                    <br><br>
-
-                    <?php if (empty($this->event['routeFrom'])) : ?>
-                        <i class="glyphicon glyphicon-map-marker text-success"></i> <strong>Where: </strong> <?= $this->event['routeTo']; ?> <br>
-                    <?php else: ?>
-                        <i class="glyphicon glyphicon-map-marker text-info"></i> <strong>From: </strong> <?= $this->event['routeFrom']; ?> <br>
-                        <i class="glyphicon glyphicon-map-marker text-success"></i> <strong>To: </strong> <?= $this->event['routeTo']; ?> <br>
-                    <?php endif; ?>
-
-                    <?php if (!empty($this->event['routeVia'])) : ?>
-                        <strong>Via: </strong> Житомир, Рівне, Луцьк<?= $this->event['routeVia']; ?>
-                    <?php endif; ?>
-
-                    <hr>
-                    <span>Created by: <a href="/web/user/view/<?= $this->event['user_id']; ?>" class="text-info"><?= $this->event['username']; ?></a></span>
-                    <span class="pull-right" style="margin-top: -4px;">
-                        <a href="/web/events/accept/<?= $this->event['id']; ?>" class="btn-join btn btn-primary" style="padding: 3px 20px;"><i class="glyphicon glyphicon-thumbs-up"></i> Join</a>
-                    </span>
-                </li>
-            </ul-->
-
-
-
             <div class="leave-comment-container">
-
-                <?php if ($this->commmentsAccess) : ?>
+                <?php if ($this->commentsAccess == 1) : ?>
                     <form method="post" action="/web/events/addcomment" name="leave-comment-form">
                         <strong>Comments:</strong>
                         <small><a href="#" class="leave-comment-link" style="text-decoration: underline;">Leave a comment</a></small>
@@ -104,7 +80,7 @@
                         </span>
                     </div>
                     <p style="padding: 10px 5px 20px; font-size: 13px;">
-                        <?= $comment['text']; ?>
+                        <?= nl2br($comment['text']); ?>
                     </p>
 
                 <?php $i++; endforeach; ?>
@@ -130,8 +106,7 @@
 
         // test btn alert
         $('.btn-join').click(function(e){
-            e.preventDefault();
-            alert('aaaaaa');
+
         });
 
         // leave a comment

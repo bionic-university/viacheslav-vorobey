@@ -110,4 +110,32 @@ class Events extends Model
     {
         return $this->db->delete('event', ['event_id' => $eventId]);
     }
+
+    /**
+     * @param int $eventId
+     * @param int $userId
+     * @return bool
+     */
+    public function checkJoinedUser($eventId, $userId)
+    {
+        $sql = 'SELECT event_id, user_id FROM event_user WHERE event_id = :eid AND user_id = :uid';
+        $result = $this->db->fetchAll($sql, ['eid' => $eventId, 'uid' => $userId]);
+
+        return $result ? true : false;
+    }
+
+    /**
+     * @param int $eventId
+     * @return array
+     */
+    public function getAttendingUsers($eventId)
+    {
+        $sql = 'SELECT eu.user_id, u.username
+                FROM event_user eu
+                JOIN user u ON eu.user_id = u.id
+                WHERE event_id = :eid';
+        $result = $this->db->fetchAll($sql, ['eid' => $eventId]);
+
+        return $result;
+    }
 }

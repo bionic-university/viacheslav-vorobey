@@ -99,10 +99,14 @@ class EventsController extends Controller
         //if (isset($_POST['func']) and !empty($_POST['func'])) echo "Сообщение отправлено!";
 
         $id = abs((int) $id);
+        $userId = $this->session->get('uid');
+
         $model = $this->loadModel('events');
         $comments = $this->loadModel('comment');
-
         $event = $model->getEvent($id);
+
+        $isJoined = $model->checkJoinedUser($id, $userId);
+        $attendingUsers = $model->getAttendingUsers($id);
 
         /** Google Maps API */
         $map = new Map();
@@ -158,7 +162,10 @@ class EventsController extends Controller
                 foreach ($route->getLegs() as $leg) {
                     // Set the start location & the end location into array
                     $markerPositions = [
-                        'start' => [$leg->getStartLocation()->getLatitude(), $leg->getStartLocation()->getLongitude()],
+                        'start' => [
+                            $leg->getStartLocation()->getLatitude(),
+                            $leg->getStartLocation()->getLongitude()
+                        ],
                         'end' => [$leg->getEndLocation()->getLatitude(), $leg->getEndLocation()->getLongitude()],
                     ];
 
@@ -192,7 +199,7 @@ class EventsController extends Controller
             $encodedPolyline = new EncodedPolyline();
             $encodedPolyline->setValue($overviewPolyline->getValue());
             $encodedPolyline->setOptions(array(
-                'geodesic'    => true,
+                'geodesic' => true,
                 'strokeColor' => '#3079ed',
                 'strokeOpacity' => 0.8,
                 'strokeWeight' => 5
@@ -206,7 +213,9 @@ class EventsController extends Controller
         $this->view->map = $mapHelper->render($map);
         $this->view->event = $event;
         $this->view->comments = $comments->getComments($id);
-        $this->view->commentsAccess = (bool)$this->session->get('user_id');
+        $this->view->commentsAccess = (bool) $userId;
+        $this->view->isJoined = (bool) $isJoined;
+        $this->view->attendingUsers = $attendingUsers;
         $this->view->render('events/view');
     }
 

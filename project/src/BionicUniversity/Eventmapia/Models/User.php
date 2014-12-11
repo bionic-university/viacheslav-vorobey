@@ -125,4 +125,18 @@ class User extends Model
 
         return false;
     }
+
+    public function getUser($id)
+    {
+        $sql = 'SELECT u.id, u.username
+                FROM user u
+                WHERE u.id = :id';
+        $result = $this->db->fetchRow($sql, ['id' => $id]);
+
+        if (!$result) {
+            throw new \Exception("User doesn't exist");
+        }
+
+        return $result;
+    }
 }
