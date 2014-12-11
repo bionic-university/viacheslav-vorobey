@@ -1,31 +1,86 @@
 <div class="container-fluid">
     <div class="row">
         <ol class="breadcrumb">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Events</a></li>
-            <li class="active">View</li>
+            <li class="active">Dashboard</a></li>
         </ol>
 
-        <div class="col-xs-12">
-            <ul class="nav nav-tabs nav-justified1">
-                <li role="presentation" class="active"><a href="#">Home</a></li>
-                <li role="presentation"><a href="#">Events</a></li>
-                <li role="presentation"><a href="#">Users</a></li>
-            </ul>
-
+        <div class="col-xs-7">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Panel title</h3>
+                    <h3 class="panel-title">Latest events</h3>
                 </div>
                 <div class="panel-body">
-                    Panel content
+                    <table class="table">
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Started</th>
+                            <th>Created by</th>
+                            <th>Created</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>3</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
-
         </div>
 
+        <div class="col-xs-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">New users</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Registered</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>3</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
 
+    </div>
 
+    <div class="row">
+
+        <div class="col-xs-7">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Latest comments</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <tr>
+                            <th>ID</th>
+                            <th>Event</th>
+                            <th>User</th>
+                            <th>Date</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>3</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
 
     </div>
 

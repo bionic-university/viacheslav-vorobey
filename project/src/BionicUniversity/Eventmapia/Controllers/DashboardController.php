@@ -8,7 +8,7 @@
  
 namespace BionicUniversity\Eventmapia\Controllers;
 
-use BionicUniversity\Eventmapia\Core\Controller;
+use BionicUniversity\Eventmapia\Core\BackendController;
 
 /**
  * DashboardController
@@ -20,7 +20,38 @@ class DashboardController extends BackendController
      */
     public function indexAction()
     {
-        $this->init();
-        $this->view->render('dashboard/dashboard/index');
+        $this->view->render('dashboard/index');
+    }
+
+    /**
+     * Events action
+     */
+    public function eventsAction()
+    {
+        $this->view->render('dashboard/events');
+    }
+
+    /**
+     * Users action
+     */
+    public function usersAction()
+    {
+        $this->view->render('dashboard/users');
+    }
+
+    /**
+     * Comments action
+     */
+    public function commentsAction()
+    {
+        $this->view->render('dashboard/comments');
+    }
+
+    /**
+     * Settings action
+     */
+    public function settingsAction()
+    {
+        $this->view->render('dashboard/settings');
     }
 }
