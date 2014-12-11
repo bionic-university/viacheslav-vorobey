@@ -30,10 +30,13 @@
                     <hr>
 
                     <strong>Who’s Attending: </strong> <br>
-                    <small><strong style="color: #555">
-                    <? foreach ($this->attendingUsers as $user) : ?>
-                        <a href="/web/user/view/<?= $user['user_id']; ?>"><?= $user['username']; ?></a> &nbsp;
-                    <? endforeach; ?>
+                    <small><strong>
+                    <?
+                        foreach ($this->attendingUsers as $user) {
+                            $string .= '<a href="/web/user/view/'. $user['user_id'] .'" style="color: #333">'. $user['username'] .'</a>, ';
+                        }
+                        echo rtrim($string, ', ');
+                    ?>
                     </strong></small>
 
                     <hr>

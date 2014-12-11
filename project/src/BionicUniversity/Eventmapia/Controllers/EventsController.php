@@ -166,7 +166,10 @@ class EventsController extends Controller
                             $leg->getStartLocation()->getLatitude(),
                             $leg->getStartLocation()->getLongitude()
                         ],
-                        'end' => [$leg->getEndLocation()->getLatitude(), $leg->getEndLocation()->getLongitude()],
+                        'end' => [
+                            $leg->getEndLocation()->getLatitude(),
+                            $leg->getEndLocation()->getLongitude()
+                        ],
                     ];
 
                     $commonInfo = [
