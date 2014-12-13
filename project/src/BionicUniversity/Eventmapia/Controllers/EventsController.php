@@ -127,7 +127,7 @@ class EventsController extends Controller
             'width'     => '58%',
             'height'    => 'calc(100% - 0)',
             'position'  => 'absolute',
-            'right'     => '4px',
+            'right'     => '0px',
             'top'       => '50px',
             'bottom'    => '2px',
             'overflow'  => 'hidden',
@@ -181,7 +181,7 @@ class EventsController extends Controller
 
                     // Set the directions steps
                     foreach ($leg->getSteps() as $key => $step) {
-                        $instructions[$key] = [
+                        $instructions[] = [
                             $step->getInstructions(),
                             $step->getDistance()->getText(),
                             $step->getDuration()->getText(),
@@ -219,6 +219,7 @@ class EventsController extends Controller
         $this->view->commentsAccess = (bool) $userId;
         $this->view->isJoined = (bool) $isJoined;
         $this->view->attendingUsers = $attendingUsers;
+        $this->view->instructions = $instructions;
         $this->view->render('events/view');
     }
 

@@ -22,11 +22,28 @@
                     <?php endif; ?>
 
                     <?php if (!empty($this->event['routeVia'])) : ?>
-                        <strong>Via: </strong> Житомир, Рівне, Луцьк<?= $this->event['routeVia']; ?>
+                        <strong>Via: </strong> <?= $this->event['routeVia']; ?>
                     <?php endif; ?>
 
                     <i class="glyphicon glyphicon-time text-info"></i> <strong>Date/Time: </strong> <?= $this->event['date']; ?> <br>
 
+                    <br>
+                    <div class="event-instructions-wrapper">
+                        <a class="show-instructions" href="#">Show instructions</a>
+                        <div class="event-instructions-content">
+
+                            <table class="table">
+                                <?php foreach ($this->instructions as $instruction) : ?>
+                                <tr>
+                                    <td><?= $instruction[0]; ?></td>
+                                    <td width="60"><?= $instruction[1]; ?></td>
+                                    <td width="50"><?= $instruction[2]; ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </table>
+
+                        </div>
+                    </div>
                     <hr>
 
                     <strong>Who’s Attending: </strong> <br>
@@ -43,9 +60,9 @@
 
                     <span>Created by: <a href="/web/user/view/<?= $this->event['user_id']; ?>" class="text-info"><?= $this->event['username']; ?></a></span>
                     <span class="pull-right" style="margin-top: -4px;">
-                        <?php if (!$this->isJoined) :?>
+                        <?php if (!$this->isJoined && $this->commentsAccess) :?>
                             <a href="/web/events/accept/<?= $this->event['id']; ?>" class="btn-join btn btn-primary" style="padding: 3px 20px;"><i class="glyphicon glyphicon-thumbs-up"></i> Join</a>
-                        <?php else : ?>
+                        <?php elseif ($this->commentsAccess) : ?>
                             <a href="/web/events/cancel/<?= $this->event['id']; ?>" class="btn-cancel btn btn-warning" style="padding: 3px 20px;"><i class="glyphicon glyphicon-thumbs-down"></i> Cancel</a>
                         <?php endif; ?>
                     </span>
@@ -56,7 +73,7 @@
                 <?php if ($this->commentsAccess == 1) : ?>
                     <form method="post" action="/web/events/addcomment" name="leave-comment-form">
                         <strong>Comments:</strong>
-                        <small><a href="#" class="leave-comment-link" style="text-decoration: underline;">Leave a comment</a></small>
+                        <small><a href="#" class="leave-comment-link">Show/hide comments</a></small>
                         <textarea name="comment" rows="2" class="form-control leave-comment-textarea"></textarea>
                         <input type="hidden" name="event_id" value="<?= $this->event['id']; ?>">
                         <button class="btn btn-sm btn-primary leave-comment-btn" type="submit" style="margin-top: 5px;">Submit</button>
@@ -68,7 +85,7 @@
                     </div>
                 <?php endif; ?>
 
-                <div class="panel-default">
+                <div class="panel-default comments-content">
                 <?php $i = 1; foreach ($this->comments as $comment) : ?>
 
                     <div class="panel-heading" style="padding: 6px 10px;">
@@ -101,6 +118,16 @@
 <script>
     $(function() {
 
+        // Hide map instructions on page load
+        $('.event-instructions-content').hide();
+
+        // Show instructions
+        $('.show-instructions').click(function(e){
+            e.preventDefault();
+            $('#map-canvas-view').css('position', 'fixed');
+            $('.event-instructions-content').toggle();
+        });
+
         // Add event
         $('#btn-add-via-point').click(function(e){
             e.preventDefault();
@@ -115,8 +142,7 @@
         // leave a comment
         $('.leave-comment-link').click(function(e){
             e.preventDefault();
-            $('.leave-comment-textarea').toggle();
-            $('.leave-comment-btn').toggle();
+            $('.comments-content').toggle();
         });
 
         //$.ajax({

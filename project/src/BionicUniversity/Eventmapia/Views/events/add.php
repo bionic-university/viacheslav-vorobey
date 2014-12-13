@@ -75,10 +75,30 @@
     var directionsService = new google.maps.DirectionsService();
     var map;
     var routeFrom, routeTo;
+    var lngLat = [];
 
     function createObj() {
         routeFrom = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input1'));
         routeTo = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input2'));
+    }
+
+    function saveLatLng() {
+        createObj();
+
+        setInterval(function() {
+            var from = routeFrom.getPlace();
+            var to = routeFrom.getPlace();
+
+            if (!from.geometry && !to.geometry) {
+                return;
+            }
+
+            console.log('from: ' + from.geometry.location);
+            console.log(from);
+
+            console.log('to: ' + to.geometry.location);
+            console.log(to);
+        }, 5000);
     }
 
     function initialize() {
@@ -88,20 +108,33 @@
             zoom:6
         };
 
-        //var routeFrom = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input1'));
-        //var routeTo = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input2'));
-        createObj();
+        var searchField = document.getElementById('place-autocomplete-input1');
+        var searchOptions = [];
+        routeFrom = new google.maps.places.Autocomplete(searchField, searchOptions);
+        routeTo = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input2'));
+
+        google.maps.event.addListener(routeFrom, 'place_changed', function() {
+            var from = routeFrom.getPlace();
+            if (!from.geometry) {
+                return;
+            }
+            lngLat.push(from.geometry.location);
+        });
+
+        google.maps.event.addListener(routeTo, 'place_changed', function() {
+            var to = routeTo.getPlace();
+            if (!to.geometry) {
+                return;
+            }
+            lngLat.push(to.geometry.location);
+        });
+
+
+
 
         //var autocompleteSearch = new google.maps.places.Autocomplete(searchField, searchOptions);
 
-        setInterval(function() {
-            var place = routeFrom.getPlace();
-            console.log('place: ');
-            console.log(place);
-        }, 5000);
-
-
-
+        console.log(lngLat);
 
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
         directionsDisplay.setMap(map);
@@ -124,4 +157,25 @@
 
     google.maps.event.addDomListener(window, 'load', initialize);
 
+    $(document).ready(function() {
+        $('#btn-add-submit').click(function (e) {
+
+            e.preventDefault();
+            //createObj();
+
+            var routeFrom = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input1'));
+            var routeTo = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input2'));
+
+            // Save lat & lng to array
+            //var from = routeFrom.getPlace();
+            //var to = routeTo.getPlace();
+            //if (!from.geometry && !to.geometry) {
+            //    return;
+            //}
+            //lngLat.push(from.geometry.location);
+            //lngLat.push(to.geometry.location);
+
+            console.log(lngLat);
+        });
+    });
 </script>

@@ -138,4 +138,18 @@ class Events extends Model
 
         return $result;
     }
+
+    /**
+     * @param $userId
+     * @return array
+     */
+    public function getUserEvents($userId)
+    {
+        $sql = 'SELECT * FROM event
+                WHERE user_id = :user_id
+                ORDER BY created_time DESC';
+        $result = $this->db->fetchAll($sql, [':user_id' => $userId]);
+
+        return $result;
+    }
 }

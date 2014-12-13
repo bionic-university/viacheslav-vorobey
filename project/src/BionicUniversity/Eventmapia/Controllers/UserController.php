@@ -40,7 +40,7 @@ class UserController extends Controller
      */
     public function editAction($id)
     {
-
+        // @TODO:
     }
 
     /**
@@ -55,9 +55,14 @@ class UserController extends Controller
         }
 
         $id = abs((int) $id);
+
         $model = $this->loadModel('user');
+        $events = $this->loadModel('events');
+        $comments = $this->loadModel('comment');
 
         $this->view->user = $model->getUser($id);
+        $this->view->comments = $comments->getUserComments($id);
+        $this->view->events = $events->getUserEvents($id);
         $this->view->render('user/view');
     }
 }

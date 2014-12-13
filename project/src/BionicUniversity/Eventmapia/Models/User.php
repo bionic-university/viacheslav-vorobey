@@ -128,7 +128,7 @@ class User extends Model
 
     public function getUser($id)
     {
-        $sql = 'SELECT u.id, u.username
+        $sql = 'SELECT u.id, u.username, u.created_time
                 FROM user u
                 WHERE u.id = :id';
         $result = $this->db->fetchRow($sql, ['id' => $id]);

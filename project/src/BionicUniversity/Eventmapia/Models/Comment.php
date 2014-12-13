@@ -30,6 +30,16 @@ class Comment extends Model
         return $result;
     }
 
+    public function getUserComments($userId)
+    {
+        $sql = 'SELECT * FROM comment
+                WHERE user_id = :user_id
+                ORDER BY created_time DESC';
+        $result = $this->db->fetchAll($sql, [':user_id' => $userId]);
+
+        return $result;
+    }
+
     /**
      * @param array $data
      * @return int
