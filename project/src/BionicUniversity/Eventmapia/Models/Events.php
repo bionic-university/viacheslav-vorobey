@@ -22,12 +22,17 @@ class Events extends Model
      * @return array $result
      * @throws \Exception
      */
-    public function getAllEvents()
+    public function getAllEvents($limit = null)
     {
-        $sql = 'SELECT e.id, e.title, e.description, e.date, e.user_id, u.username
+        $sql = 'SELECT e.id, e.title, e.description, e.date, e.end_date, e.user_id, u.username
                 FROM event e
                 LEFT JOIN user u ON e.user_id = u.id
-                ORDER BY e.date DESC';
+                ORDER BY e.created_time DESC';
+
+        if (!is_null($limit) && is_int($limit)) {
+            $sql .= " LIMIT $limit";
+        }
+
         $result = $this->db->fetchAll($sql);
 
         if (!$result) {
@@ -73,8 +78,12 @@ class Events extends Model
     public function addEvent(array $data)
     {
         // Prepare data
+        $date = new \DateTime($data['date']);
+        $endDate = new \DateTime($data['end_date']);
+
         $data['user_id'] = !empty($data['user_id']) ? $data['user_id'] : self::ADMIN_ID;
-        $data['date'] = date('Y-m-d H:i:s');
+        $data['date'] = $date->format('Y-m-d H:i:s');
+        $data['end_date'] = $endDate->format('Y-m-d H:i:s');
         $data['created_time'] = date('Y-m-d H:i:s');
 
         return $this->db->insert('event', $data);
@@ -140,6 +149,7 @@ class Events extends Model
     }
 
     /**
+     * Get all events by userID
      * @param $userId
      * @return array
      */

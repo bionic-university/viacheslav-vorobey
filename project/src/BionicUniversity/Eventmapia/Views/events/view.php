@@ -48,7 +48,7 @@
 
                     <strong>Who’s Attending: </strong> <br>
                     <small><strong>
-                    <?
+                    <?php
                         foreach ($this->attendingUsers as $user) {
                             $string .= '<a href="/web/user/view/'. $user['user_id'] .'" style="color: #333">'. $user['username'] .'</a>, ';
                         }
@@ -58,7 +58,7 @@
 
                     <hr>
 
-                    <span>Created by: <a href="/web/user/view/<?= $this->event['user_id']; ?>" class="text-info"><?= $this->event['username']; ?></a></span>
+                    <span class="small">Created by: <a href="/web/user/view/<?= $this->event['user_id']; ?>" class="text-info"><?= $this->event['username']; ?></a></span>
                     <span class="pull-right" style="margin-top: -4px;">
                         <?php if (!$this->isJoined && $this->commentsAccess) :?>
                             <a href="/web/events/accept/<?= $this->event['id']; ?>" class="btn-join btn btn-primary" style="padding: 3px 20px;"><i class="glyphicon glyphicon-thumbs-up"></i> Join</a>
@@ -116,6 +116,9 @@
 
 
 <script>
+
+    //$('#map-canvas-view').css('position', 'fixed');
+
     $(function() {
 
         // Hide map instructions on page load
@@ -128,29 +131,11 @@
             $('.event-instructions-content').toggle();
         });
 
-        // Add event
-        $('#btn-add-via-point').click(function(e){
-            e.preventDefault();
-            alert(1111111);
-        });
-
-        // test btn alert
-        $('.btn-join').click(function(e){
-
-        });
-
-        // leave a comment
+        // Leave a comment
         $('.leave-comment-link').click(function(e){
             e.preventDefault();
             $('.comments-content').toggle();
         });
-
-        //$.ajax({
-        //    url: "http://bionic.dev/web/events/view/1",
-        //    type: "POST",
-        //    data: { func: "test" },
-        //    success: function(data) { alert(data); }
-        //});
 
     });
 

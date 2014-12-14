@@ -30,6 +30,11 @@ class Comment extends Model
         return $result;
     }
 
+    /**
+     * Get all comments by userID
+     * @param $userId
+     * @return array
+     */
     public function getUserComments($userId)
     {
         $sql = 'SELECT * FROM comment
@@ -41,6 +46,7 @@ class Comment extends Model
     }
 
     /**
+     * Add comment
      * @param array $data
      * @return int
      * @throws \Exception

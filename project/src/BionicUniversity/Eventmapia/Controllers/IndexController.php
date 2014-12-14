@@ -9,23 +9,27 @@
 namespace BionicUniversity\Eventmapia\Controllers;
 
 use BionicUniversity\Eventmapia\Core\Controller;
-use BionicUniversity\Eventmapia\Models\Events;
 
 /**
- * IndexController
- *
+ * Class IndexController
  */
 class IndexController extends Controller
 {
+    /**
+     * Show latest {N} events
+     */
     public function indexAction()
     {
         $model = $this->loadModel('events');
-        $events = $model->getAllEvents();
+        $events = $model->getAllEvents(3);
 
         $this->view->events = $events;
         $this->view->render('index/index');
     }
 
+    /**
+     * User registration
+     */
     public function registrationAction()
     {
         if (!$this->auth->isGuest()) {
@@ -56,6 +60,9 @@ class IndexController extends Controller
         $this->view->render('index/registration');
     }
 
+    /**
+     * User login
+     */
     public function loginAction()
     {
         if (!$this->auth->isGuest()) {

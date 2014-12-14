@@ -20,7 +20,7 @@ class UserController extends Controller
      */
     public function indexAction()
     {
-        
+        $this->redirect('/web/index/index');
     }
 
     /**

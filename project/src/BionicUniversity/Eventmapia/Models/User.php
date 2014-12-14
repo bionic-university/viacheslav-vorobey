@@ -82,7 +82,6 @@ class User extends Model
         $this->db->query($sql, $params, ['active' => \PDO::PARAM_INT, 'admin' => \PDO::PARAM_INT]);
     }
 
-
     /**
      * Return a hash password
      * @param string $password
@@ -126,6 +125,11 @@ class User extends Model
         return false;
     }
 
+    /**
+     * @param $id
+     * @return array
+     * @throws \Exception
+     */
     public function getUser($id)
     {
         $sql = 'SELECT u.id, u.username, u.created_time

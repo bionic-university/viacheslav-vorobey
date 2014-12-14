@@ -61,6 +61,7 @@ class EventsController extends Controller
                 $data = [
                     'title' => $params['title'],
                     'date' => $params['date'],
+                    'end_date' => $params['endDate'],
                     'description' => $params['description'],
                     'user_id' => $this->session->get('uid'),
                     'destinations' => serialize($destinations),

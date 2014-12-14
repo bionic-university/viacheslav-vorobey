@@ -17,23 +17,20 @@
                         <div class="form-group">
                             <textarea rows="5" class="form-control" name="description" placeholder="Description"></textarea>
                         </div>
-                        <div class="form-inline">
-                            <input type="text" class="form-control" name="date" placeholder="Start date">
-                            &nbsp;&nbsp;
-                            <div class="checkbox">
-                                <label>
-                                    <input id="add-to-google-calendar" type="checkbox" checked="checked"> Add event to Google calendar
-                                </label>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <input type="text" class="form-control" name="date" placeholder="Start date" id="datepicker-1">
+                            </div>
+                            <div class="col-lg-6">
+                                <input type="text" class="form-control" name="endDate" placeholder="End date" id="datepicker-2">
                             </div>
                         </div>
-
                         <hr>
-
                         <div class="form-group">
-                            <input type="text" name="routeFrom" placeholder="From" class="form-control" id="place-autocomplete-input1" autocomplete="off" onchange="calcRoute()">
+                            <input type="text" name="routeFrom" placeholder="From" class="form-control" id="place-autocomplete-input1" autocomplete="off">
                         </div>
                         <div class="form-group">
-                            <input type="text" name="routeTo" placeholder="To" class="form-control" id="place-autocomplete-input2" onchange="calcRoute()">
+                            <input type="text" name="routeTo" placeholder="To" class="form-control" id="place-autocomplete-input2">
                         </div>
                         <div class="form-inline">
                             <a href="#" class="btn btn-default" id="btn-add-via-point">Add via point</a>
@@ -44,62 +41,26 @@
                                 <label> <input type="radio" class="form-control" name="mode[]" value="WALKING" style="margin: 0"> Walking </label>
                             </div>
                         </div>
-
                         <hr>
-
                         <button type="submit" name="submit" class="btn btn-primary pull-right" id="btn-add-submit">Add event</button>
                     </div>
                 </div>
             </form>
         </div>
-
-        <div class="col-xs-7"> </div>
+        <div class="col-xs-7"></div>
 
     </div>
 </div>
 
 
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
-<script src="/web/js/autocomplete.js"></script>
-<script>
-
-    $(document).ready(function() {
-        Events.init();
-    });
-
-</script>
+<script src="/web/js/vendor/moment.min.js"></script>
+<script src="/web/js/vendor/bootstrap-datetimepicker.min.js"></script>
+<script src="/web/js/vendor/locale-uk.js"></script>
 
 <script>
-
-    var directionsDisplay;
+    var map, directionsDisplay;
     var directionsService = new google.maps.DirectionsService();
-    var map;
-    var routeFrom, routeTo;
-    var lngLat = [];
-
-    function createObj() {
-        routeFrom = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input1'));
-        routeTo = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input2'));
-    }
-
-    function saveLatLng() {
-        createObj();
-
-        setInterval(function() {
-            var from = routeFrom.getPlace();
-            var to = routeFrom.getPlace();
-
-            if (!from.geometry && !to.geometry) {
-                return;
-            }
-
-            console.log('from: ' + from.geometry.location);
-            console.log(from);
-
-            console.log('to: ' + to.geometry.location);
-            console.log(to);
-        }, 5000);
-    }
 
     function initialize() {
         directionsDisplay = new google.maps.DirectionsRenderer();
@@ -113,69 +74,25 @@
         routeFrom = new google.maps.places.Autocomplete(searchField, searchOptions);
         routeTo = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input2'));
 
-        google.maps.event.addListener(routeFrom, 'place_changed', function() {
-            var from = routeFrom.getPlace();
-            if (!from.geometry) {
-                return;
-            }
-            lngLat.push(from.geometry.location);
-        });
-
-        google.maps.event.addListener(routeTo, 'place_changed', function() {
-            var to = routeTo.getPlace();
-            if (!to.geometry) {
-                return;
-            }
-            lngLat.push(to.geometry.location);
-        });
-
-
-
-
-        //var autocompleteSearch = new google.maps.places.Autocomplete(searchField, searchOptions);
-
-        console.log(lngLat);
-
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
         directionsDisplay.setMap(map);
-    }
-
-    function calcRoute() {
-        var start = document.getElementById('place-autocomplete-input1').value;
-        var end = document.getElementById('place-autocomplete-input2').value;
-        var request = {
-            origin:start,
-            destination:end,
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-        directionsService.route(request, function(response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-                directionsDisplay.setDirections(response);
-            }
-        });
     }
 
     google.maps.event.addDomListener(window, 'load', initialize);
 
     $(document).ready(function() {
-        $('#btn-add-submit').click(function (e) {
+        Events.init();
 
-            e.preventDefault();
-            //createObj();
+        // Autocomplete
+        $('#place-autocomplete-input1').change(Events.refreshDirection);
+        $('#place-autocomplete-input2').change(Events.refreshDirection);
 
-            var routeFrom = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input1'));
-            var routeTo = new google.maps.places.Autocomplete(document.getElementById('place-autocomplete-input2'));
-
-            // Save lat & lng to array
-            //var from = routeFrom.getPlace();
-            //var to = routeTo.getPlace();
-            //if (!from.geometry && !to.geometry) {
-            //    return;
-            //}
-            //lngLat.push(from.geometry.location);
-            //lngLat.push(to.geometry.location);
-
-            console.log(lngLat);
+        // DatetimePicker
+        $('#datepicker-1').datetimepicker({
+            language: 'uk'
+        });
+        $('#datepicker-2').datetimepicker({
+            language: 'uk'
         });
     });
 </script>

@@ -1,8 +1,9 @@
-<div id="map-canvas"></div>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-xs-5" id="left">
 
+        <div id="map-canvas"></div>
+
+        <div class="col-xs-5" id="left">
             <br>
             <?php foreach($this->events as $event) : ?>
             <ul class="list-group">
@@ -12,25 +13,18 @@
                 </li>
                 <li class="list-group-item">
                     <?= $event['description']; ?>
-                    <hr> <span>Created by: <a href="/web/user/view/<?= $event['user_id']; ?>" class="text-info"><?= $event['username']; ?></a></span>
+                    <hr> <span class="small">Created by: <a href="/web/user/view/<?= $event['user_id']; ?>" class="text-info"><?= $event['username']; ?></a></span>
                     <span class="pull-right" style="margin-top: -4px;">
                         <a href="/web/events/view/<?= $event['id']; ?>" class="btn btn-default" style="padding: 3px 20px;">More</a>
                     </span>
-
-
                 </li>
             </ul>
             <?php endforeach; ?>
 
-            <!--
-            div class="panel panel-default"> <div class="panel-heading"><a href="">title here</a></div> </div>
-            <p>description</p><hr
-            -->
-
-            <p> <a href="#" target="_ext" class="center-block btn btn-primary">Load more events</a> </p>
+            <a href="/web/calendar/index" class="center-block btn btn-primary">Show all events</a><br>
 
         </div>
-        <div class="col-xs-7"><!--map-canvas will be postioned here--></div>
+        <div class="col-xs-7"></div>
 
     </div>
 </div>
