@@ -110,10 +110,28 @@ class Database extends \PDO
     /**
      * Create a delete query
      * @param string $table
+     * @param array $data
+     * @return int Number of rows affected by the SQL statement
      */
-    public function delete($table)
+    public function delete($table, $data = [])
     {
-        // @TODO:
+        // OMG
+        $where = '1 = 1';
+        foreach ($data as $key => $value) {
+            $where .= " AND {$key} = {$value}";
+        }
+
+        $this->sql = 'DELETE FROM `' . $table . '` WHERE ' . $where;
+        $stmt = $this->prepare($this->sql);
+
+        foreach ($data as $key => &$param) {
+            (is_int($param))
+            ? $stmt->bindValue(':'.$key, $param, \PDO::PARAM_INT)
+            : $stmt->bindValue(':'.$key, $param, \PDO::PARAM_STR);
+        }
+
+        $stmt->execute($data);
+        return $stmt->rowCount();
     }
 
     /**

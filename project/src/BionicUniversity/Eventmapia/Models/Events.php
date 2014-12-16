@@ -50,7 +50,7 @@ class Events extends Model
      */
     public function getEvent($id)
     {
-        $sql = 'SELECT e.id, e.title, e.description, e.destinations, e.date, e.user_id, u.username
+        $sql = 'SELECT e.id, e.title, e.description, e.destinations, e.date, e.end_date, e.user_id, u.username
                 FROM event e
                 LEFT JOIN user u ON e.user_id = u.id
                 WHERE e.id = :id';
@@ -64,7 +64,11 @@ class Events extends Model
         unset($result['destinations']);
 
         $result['routeFrom'] = $destinations['routeFrom'];
+        $result['latFrom'] = $destinations['latFrom'];
+        $result['lngFrom'] = $destinations['lngFrom'];
         $result['routeTo'] = $destinations['routeTo'];
+        $result['latTo'] = $destinations['latTo'];
+        $result['lngTo'] = $destinations['lngTo'];
         $result['routeMode'] = $destinations['routeMode'];
 
         return $result;
@@ -79,12 +83,28 @@ class Events extends Model
     {
         // Prepare data
         $date = new \DateTime($data['date']);
-        $endDate = new \DateTime($data['end_date']);
+        if (!empty($data['end_date'])) {
+            $endDate = new \DateTime($data['end_date']);
+            $data['end_date'] = $endDate->format('Y-m-d H:i:s');
+        }
 
         $data['user_id'] = !empty($data['user_id']) ? $data['user_id'] : self::ADMIN_ID;
         $data['date'] = $date->format('Y-m-d H:i:s');
-        $data['end_date'] = $endDate->format('Y-m-d H:i:s');
         $data['created_time'] = date('Y-m-d H:i:s');
+
+        $latlngFrom = $this->getLatLngFromAddress($data['destinations']['routeFrom']);
+        $latlngTo = $this->getLatLngFromAddress($data['destinations']['routeTo']);
+        $destinations = [
+            'routeFrom' => $data['destinations']['routeFrom'],
+            'latFrom'   => $latlngFrom['lat'],
+            'lngFrom'   => $latlngFrom['lng'],
+            'routeTo'   => $data['destinations']['routeTo'],
+            'latTo'     => $latlngTo['lat'],
+            'lngTo'     => $latlngTo['lng'],
+            'routeMode' => $data['destinations']['routeMode']
+        ];
+
+        $data['destinations'] = serialize($destinations);
 
         return $this->db->insert('event', $data);
     }
@@ -161,5 +181,26 @@ class Events extends Model
         $result = $this->db->fetchAll($sql, [':user_id' => $userId]);
 
         return $result;
+    }
+
+
+    /**
+     * Returns latitude and longitude from an address
+     * @param string $address
+     * @return array
+     */
+    public function getLatLngFromAddress($address)
+    {
+        $result = [];
+
+        $prepareAddress = str_replace(' ', '+', $address);
+        $geocode = file_get_contents('http://maps.google.com/maps/api/geocode/json?address=' . $prepareAddress . '&sensor=false');
+
+        $output = json_decode($geocode);
+
+        $result['lat'] = $output->results[0]->geometry->location->lat;
+        $result['lng'] = $output->results[0]->geometry->location->lng;
+
+        return  $result;
     }
 }

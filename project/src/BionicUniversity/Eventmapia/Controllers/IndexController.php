@@ -51,7 +51,7 @@ class IndexController extends Controller
                 ];
 
                 $model->registerUser($data);
-                $this->redirect('/web/user/cabinet');
+                $this->redirect('/web/index/login');
             } else {
                 $this->redirect('/web/index/registration');
             }

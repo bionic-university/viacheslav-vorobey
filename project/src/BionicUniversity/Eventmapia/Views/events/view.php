@@ -25,11 +25,17 @@
                         <strong>Via: </strong> <?= $this->event['routeVia']; ?>
                     <?php endif; ?>
 
-                    <i class="glyphicon glyphicon-time text-info"></i> <strong>Date/Time: </strong> <?= $this->event['date']; ?> <br>
+                    <i class="glyphicon glyphicon-time text-info"></i> <strong>Start date: </strong> <?= $this->event['date']; ?> <br>
+
+                    <?php if ($this->event['end_date']) : ?>
+                    <i class="glyphicon glyphicon-time text-info"></i> <strong>End date: </strong> <?= $this->event['end_date']; ?> <br>
+                    <?php endif; ?>
 
                     <br>
                     <div class="event-instructions-wrapper">
-                        <a class="show-instructions" href="#">Show instructions</a>
+                        <?php if (!empty($this->event['routeFrom'])) : ?>
+                            <a class="show-instructions" href="#">Show instructions</a>
+                        <?php endif; ?>
                         <div class="event-instructions-content">
 
                             <table class="table">
@@ -137,7 +143,10 @@
             $('.comments-content').toggle();
         });
 
-    });
+        $('div').click(function(){
+            $('#map-canvas-view').css('position', 'fixed');
+        });
 
+    });
 
 </script>

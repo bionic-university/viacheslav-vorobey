@@ -13,15 +13,18 @@
 
     <div class="navbar navbar-custom navbar-fixed-top">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/"><img src="http://bionic.dev/web/images/logo.png" /></a>
+            <a class="navbar-brand" href="/">EM Dashboard</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/web/events/index">Events</a></li>
-                <li><a href="#">Add event</a></li>
-                <li><a href="/web/index/registration">Registration</a></li>
-                <li><a href="/web/index/login">Login</a></li>
-                <li>&nbsp;</li>
+                <li class="active"><a href="/web/dashboard/index">Home</a></li>
+                <li><a href="/web/dashboard/events">Events</a></li>
+                <li><a href="/web/dashboard/users">Users</a></li>
+                <li class=""><a href="/web/dashboard/comments">Comments</a></li>
+                <li class=""><a href="/web/dashboard/settings">Settings</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li style="margin-right: 30px;"><a href="/web/index/login">Logout</a></li>
             </ul>
         </div>
     </div>

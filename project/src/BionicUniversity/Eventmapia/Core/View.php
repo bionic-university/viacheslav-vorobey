@@ -72,4 +72,13 @@ class View
     {
         $this->viewPath = $viewPath;
     }
+
+    /**
+     * Set layout for view files
+     * @param $layout
+     */
+    public function setLayout($layout)
+    {
+        $this->layout = $layout . '.php';
+    }
 }

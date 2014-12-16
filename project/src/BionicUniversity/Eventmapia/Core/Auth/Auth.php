@@ -24,7 +24,7 @@ class Auth
     private $session;
 
     /** @var int $user */
-    public $user;
+    private $user;
 
     /**
      * Construct
@@ -57,7 +57,7 @@ class Auth
         $this->session->set('uid', $userId);
         $this->session->set('user_agent', $this->getUserAgent());
 
-        $this->user = $userId;
+        $this->setUser($userId);
         $this->loggedIn = true;
     }
 
@@ -70,7 +70,7 @@ class Auth
         $this->session->remove('user_agent');
         $this->session->remove('uid');
 
-        $this->user = null;
+        $this->unsetUser();
         $this->loggedIn = false;
     }
 
@@ -91,5 +91,33 @@ class Auth
     public function getUserAgent()
     {
         return $this->generateHash($_SERVER['HTTP_USER_AGENT']);
+    }
+
+    /**
+     * Set user ID
+     * @param $user
+     * @return void
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * Get user ID
+     * @return int
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Remove user ID
+     * @return void
+     */
+    public function unsetUser()
+    {
+        $this->user = null;
     }
 }

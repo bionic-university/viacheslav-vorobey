@@ -12,8 +12,16 @@
                     <input type="submit" name="submit" value="Login" class="btn btn-group-justified btn-primary">
                 </form>
             </div>
+            <br><br>
+            <div class="alert alert-info" style="font-size: 16px;">
+
+                <span class="label label-success">admin@example.com : 11111</span> &nbsp;
+                <span class="label label-success">demo@example.com : 11111 </span> &nbsp;
+                <span class="label label-success">johndoe@gmail.com : 11111 </span>  &nbsp;&nbsp;&nbsp;
+                <span class="label label-success">mikedoe@gmail.com : 11111</span> &nbsp;
+
+            </div>
 
         </div>
     </div>
 </div>
-

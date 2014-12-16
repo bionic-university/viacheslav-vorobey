@@ -61,10 +61,10 @@ class EventsController extends Controller
                 $data = [
                     'title' => $params['title'],
                     'date' => $params['date'],
-                    'end_date' => $params['endDate'],
+                    'end_date' => !empty($params['endDate']) ? $params['endDate'] : NULL,
                     'description' => $params['description'],
                     'user_id' => $this->session->get('uid'),
-                    'destinations' => serialize($destinations),
+                    'destinations' => $destinations,
                 ];
 
                 $model->addEvent($data);
@@ -96,8 +96,6 @@ class EventsController extends Controller
         if (is_null($id)) {
             throw new \Exception('Bad request');
         }
-
-        //if (isset($_POST['func']) and !empty($_POST['func'])) echo "Сообщение отправлено!";
 
         $id = abs((int) $id);
         $userId = $this->session->get('uid');
@@ -209,7 +207,18 @@ class EventsController extends Controller
                 'strokeWeight' => 5
             ));
             $map->addEncodedPolyline($encodedPolyline);
+
+        } else {
+            $position = new Coordinate($event['latTo'], $event['lngTo']);
+            $info = $event['routeTo'];
+            $info .= !empty($event['date']) ? '<hr><i class="glyphicon glyphicon-time"></i> ' . $event['date'] : '';
+            $info .= !empty($event['end_date']) ? '<br><i class="glyphicon glyphicon-time"></i> ' . $event['end_date'] : '';
+
+            $marker = new Marker($position, 'drop', null, null, null, new InfoWindow($info));
+            $map->addMarker($marker);
         }
+
+
 
         // Render map
         $mapHelper = new MapHelper();
